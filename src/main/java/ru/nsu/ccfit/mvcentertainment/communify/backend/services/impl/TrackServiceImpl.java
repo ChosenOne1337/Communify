@@ -45,7 +45,10 @@ public class TrackServiceImpl
 
     @Override
     public File getTrackFile(Long trackId) {
-        return null;
+        Track track = getEntityByIdOrThrow(trackId);
+        TrackDto trackDto = mapper.toDto(track);
+        String trackFileName = getTrackFileNameFromDto(trackDto);
+        return new File(trackDirectoryPath, trackFileName);
     }
 
     @Override
