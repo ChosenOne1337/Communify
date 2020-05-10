@@ -2,6 +2,7 @@ package ru.nsu.ccfit.mvcentertainment.communify.backend.entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.types.Genre;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -30,13 +31,9 @@ public class Playlist extends AbstractEntity<Long> {
     )
     private List<Track> tracks;
 
-    @ManyToMany
-    @JoinTable(
-            name = "playlist_genre",
-            joinColumns = @JoinColumn(name = "playlist_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
-    private List<Genre> genres;
+    @Column(name = "genre")
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
 
 
 }
