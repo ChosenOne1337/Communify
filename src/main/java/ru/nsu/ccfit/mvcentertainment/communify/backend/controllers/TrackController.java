@@ -58,7 +58,8 @@ public class TrackController {
                 name,
                 author,
                 description,
-                audioFileStream);
+                audioFileStream
+        );
         return ResponseEntity.ok(trackDto);
     }
 
