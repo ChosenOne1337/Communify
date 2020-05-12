@@ -10,18 +10,13 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.User;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.UserRepository;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserService;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.utils.ImageUtils;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Iterator;
 import java.util.Objects;
 
 @Service
@@ -67,31 +62,22 @@ public class UserServiceImpl
     }
 
     @Override
-    public UserDto setUserIcon(Long userId, InputStream imageInputStream) {
-        File tempIconFile = null;
-        try {
-            tempIconFile = createTempIconFile(imageInputStream);
-            validateImage(tempIconFile);
-            scaleImage(tempIconFile, iconWidth, iconHeight, iconFormat);
-            return setUserIcon(userId, tempIconFile);
-        } catch (Exception e) {
-            if (tempIconFile != null) {
-                tempIconFile.delete();
-            }
-
-            throw new RuntimeException(e);
+    public File getUserIcon(Long userId) {
+        UserDto userDto = mapper.toDto(getEntityByIdOrThrow(userId));
+        String iconFileName = getIconFileNameFromDto(userDto);
+        File iconFile = new File(iconDirectoryPath, iconFileName);
+        if (!iconFile.exists()) {
+            throw new RuntimeException(
+                    String.format("Icon file for user id '%d' does not exist", userId)
+            );
         }
 
-    }
-
-    @Override
-    public File getUserIcon(Long userId) {
-        return null;
+        return iconFile;
     }
 
     @Override
     @SneakyThrows
-    public UserDto deleteIcon(Long userId) {
+    public UserDto deleteUserIcon(Long userId) {
         UserDto userDto = mapper.toDto(getEntityByIdOrThrow(userId));
         String iconFileName = getIconFileNameFromDto(userDto);
         File iconFile = new File(iconDirectoryPath, iconFileName);
@@ -106,15 +92,22 @@ public class UserServiceImpl
         return userDto;
     }
 
-    private File createTempIconFile(InputStream imageInputStream) throws IOException {
-        File iconFile = File.createTempFile(
-                TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX, iconDirectoryPath
-        );
+    @Override
+    public UserDto setUserIcon(Long userId, InputStream imageInputStream) {
+        File tempIconFile = null;
+        try {
+            tempIconFile = createTempIconFile(imageInputStream);
+            ImageUtils.validateImage(tempIconFile);
+            ImageUtils.scaleImage(tempIconFile, iconWidth, iconHeight, iconFormat);
+            return setUserIcon(userId, tempIconFile);
+        } catch (Exception e) {
+            if (tempIconFile != null) {
+                tempIconFile.delete();
+            }
 
-        Files.copy(imageInputStream, iconFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        imageInputStream.close();
+            throw new RuntimeException(e);
+        }
 
-        return iconFile;
     }
 
     private UserDto setUserIcon(Long userId, File iconFile) throws IOException {
@@ -125,37 +118,15 @@ public class UserServiceImpl
         return userDto;
     }
 
-    private static void scaleImage(
-            File imageFile,
-            Integer width,
-            Integer height,
-            String outputImageFormat
-    ) throws IOException {
-        BufferedImage imageToScale = ImageIO.read(imageFile);
-        BufferedImage scaledImage = new BufferedImage(width, height, imageToScale.getType());
-        Graphics2D graphics2D = scaledImage.createGraphics();
-        graphics2D.setRenderingHint(
-                RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR
-        );
-        graphics2D.setRenderingHint(
-                RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY
-        );
-        graphics2D.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON
+    private File createTempIconFile(InputStream imageInputStream) throws IOException {
+        File iconFile = File.createTempFile(
+                TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX, iconDirectoryPath
         );
 
-        graphics2D.drawImage(imageToScale, 0, 0, width, height, null);
-        graphics2D.dispose();
-        ImageIO.write(scaledImage, outputImageFormat, imageFile);
-    }
+        Files.copy(imageInputStream, iconFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        imageInputStream.close();
 
-    private static void validateImage(File imageFile) throws IOException {
-        try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageFile)) {
-            Iterator<ImageReader> imageReaderIterator = ImageIO.getImageReaders(imageInputStream);
-            if (!imageReaderIterator.hasNext()) {
-                throw new RuntimeException("Image has an unknown format");
-            }
-        }
+        return iconFile;
     }
 
     private String getIconFileNameFromDto(UserDto userDto) {

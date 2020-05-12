@@ -11,5 +11,5 @@ public interface UserService extends Service<UserDto, Long> {
 
     File getUserIcon(Long userId);
 
-    UserDto deleteIcon(Long userId);
+    UserDto deleteUserIcon(Long userId);
 }

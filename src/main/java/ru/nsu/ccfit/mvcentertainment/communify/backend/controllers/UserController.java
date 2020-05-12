@@ -26,6 +26,13 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(
+            @RequestBody UserDto userDto
+    ) {
+        return ResponseEntity.ok(userService.create(userDto));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(
             @PathVariable("id") Long userId
@@ -33,14 +40,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getById(userId));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<UserDto> createUser(
-            @RequestBody UserDto userDto
-    ) {
-        return ResponseEntity.ok(userService.create(userDto));
-    }
-
-    @PutMapping("{id}/update")
+    @PutMapping("{id}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable("id") Long userId,
             @RequestBody UserDto userDto
@@ -65,7 +65,6 @@ public class UserController {
     public ResponseEntity<StreamingResponseBody> getUserIcon(
             @PathVariable("id") Long userId
     ) {
-        // TODO: что, если иконки нет?
         File iconFile = userService.getUserIcon(userId);
         StreamingResponseBody responseBody = outputStream -> {
             Files.copy(iconFile.toPath(), outputStream);
@@ -83,7 +82,7 @@ public class UserController {
     public ResponseEntity<UserDto> deleteUserIcon(
             @PathVariable("id") Long userId
     ) {
-        return ResponseEntity.ok(userService.deleteIcon(userId));
+        return ResponseEntity.ok(userService.deleteUserIcon(userId));
     }
 
 }
