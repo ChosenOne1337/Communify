@@ -79,4 +79,11 @@ public class UserController {
                 .body(responseBody);
     }
 
+    @DeleteMapping("/{id}/icon")
+    public ResponseEntity<UserDto> deleteUserIcon(
+            @PathVariable("id") Long userId
+    ) {
+        return ResponseEntity.ok(userService.deleteIcon(userId));
+    }
+
 }

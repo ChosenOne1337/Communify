@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.services.impl;
 
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -88,6 +89,23 @@ public class UserServiceImpl
         return null;
     }
 
+    @Override
+    @SneakyThrows
+    public UserDto deleteIcon(Long userId) {
+        UserDto userDto = mapper.toDto(getEntityByIdOrThrow(userId));
+        String iconFileName = getIconFileNameFromDto(userDto);
+        File iconFile = new File(iconDirectoryPath, iconFileName);
+
+        boolean isDeleted = Files.deleteIfExists(iconFile.toPath());
+        if (!isDeleted) {
+            throw new RuntimeException(
+                    String.format("Icon file for user id '%d' does not exist", userId)
+            );
+        }
+
+        return userDto;
+    }
+
     private File createTempIconFile(InputStream imageInputStream) throws IOException {
         File iconFile = File.createTempFile(
                 TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX, iconDirectoryPath
@@ -136,7 +154,7 @@ public class UserServiceImpl
             Iterator<ImageReader> imageReaderIterator = ImageIO.getImageReaders(imageInputStream);
             if (!imageReaderIterator.hasNext()) {
                 throw new RuntimeException("Image has an unknown format");
-            };
+            }
         }
     }
 

@@ -10,4 +10,6 @@ public interface UserService extends Service<UserDto, Long> {
     UserDto setUserIcon(Long userId, InputStream imageInputStream);
 
     File getUserIcon(Long userId);
+
+    UserDto deleteIcon(Long userId);
 }
