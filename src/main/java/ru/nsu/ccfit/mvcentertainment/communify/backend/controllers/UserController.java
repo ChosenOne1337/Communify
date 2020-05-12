@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityImageService;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserIconService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,12 +21,12 @@ import java.nio.file.Files;
 public class UserController {
 
     private final UserService userService;
-    private final EntityImageService<UserDto, Long> userIconService;
+    private final UserIconService userIconService;
 
     @Autowired
     public UserController(
             UserService userService,
-            EntityImageService<UserDto, Long> userIconService
+            UserIconService userIconService
     ) {
         this.userService = userService;
         this.userIconService = userIconService;

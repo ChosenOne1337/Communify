@@ -9,8 +9,6 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.UserRepository;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserService;
 
-import java.util.Objects;
-
 @Service
 public class UserServiceImpl
     extends AbstractService<User, UserDto, Long>
@@ -26,12 +24,6 @@ public class UserServiceImpl
     ) {
         this.repository = repository;
         this.mapper = mapper;
-    }
-
-    @Override
-    public UserDto create(UserDto userDto) {
-        userDto.setBio(Objects.requireNonNullElse(userDto.getBio(), ""));
-        return super.create(userDto);
     }
 
     @Override
