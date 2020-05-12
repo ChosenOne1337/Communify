@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public interface TrackService extends Service<TrackDto, Long> {
+public interface TrackService extends EntityService<TrackDto, Long> {
 
     TrackDto uploadTrack(String name,
                          String author,

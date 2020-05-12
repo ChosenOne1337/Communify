@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.AbstractDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.AbstractEntity;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.services.Service;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityService;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.Serializable;
@@ -18,7 +18,7 @@ public abstract class AbstractService
         <E extends AbstractEntity<ID>,
         DTO extends AbstractDto<ID>,
         ID extends Serializable>
-        implements Service<DTO, ID> {
+        implements EntityService<DTO, ID> {
 
     protected abstract JpaRepository<E, ID> getRepository();
     protected abstract Mapper<E, DTO, ID> getMapper();
@@ -91,15 +91,6 @@ public abstract class AbstractService
                 .collect(Collectors.toList());
 
         getRepository().deleteAll(entityCollection);
-    }
-
-    protected void throwIfDoesNotExist(ID id) {
-        boolean exists = getRepository().existsById(id);
-        if (!exists) {
-            throw new EntityNotFoundException(
-                    String.format("Entity with id '%s' was not found", id)
-            );
-        }
     }
 
     protected E getEntityByIdOrThrow(ID id) {

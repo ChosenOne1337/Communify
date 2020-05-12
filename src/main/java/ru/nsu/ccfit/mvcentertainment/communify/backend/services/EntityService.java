@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import java.io.Serializable;
 import java.util.Collection;
 
-public interface Service<DTO, ID extends Serializable> {
+public interface EntityService<DTO, ID extends Serializable> {
 
     long countAll();
 

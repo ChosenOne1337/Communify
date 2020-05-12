@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityImageService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +21,15 @@ import java.nio.file.Files;
 public class UserController {
 
     private final UserService userService;
+    private final EntityImageService<UserDto, Long> userIconService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(
+            UserService userService,
+            EntityImageService<UserDto, Long> userIconService
+    ) {
         this.userService = userService;
+        this.userIconService = userIconService;
     }
 
     @PostMapping
@@ -57,7 +63,7 @@ public class UserController {
             HttpServletRequest request
     ) throws IOException {
         InputStream imageInputStream = request.getInputStream();
-        UserDto userDto = userService.setUserIcon(userId, imageInputStream);
+        UserDto userDto = userIconService.setImage(userId, imageInputStream);
         return ResponseEntity.ok(userDto);
     }
 
@@ -65,7 +71,7 @@ public class UserController {
     public ResponseEntity<StreamingResponseBody> getUserIcon(
             @PathVariable("id") Long userId
     ) {
-        File iconFile = userService.getUserIcon(userId);
+        File iconFile = userIconService.getImage(userId);
         StreamingResponseBody responseBody = outputStream -> {
             Files.copy(iconFile.toPath(), outputStream);
         };
@@ -82,7 +88,7 @@ public class UserController {
     public ResponseEntity<UserDto> deleteUserIcon(
             @PathVariable("id") Long userId
     ) {
-        return ResponseEntity.ok(userService.deleteUserIcon(userId));
+        return ResponseEntity.ok(userIconService.deleteImage(userId));
     }
 
 }
