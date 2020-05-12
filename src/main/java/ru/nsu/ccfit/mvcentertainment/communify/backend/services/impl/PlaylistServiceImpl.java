@@ -8,6 +8,9 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.PlaylistRepository;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistService;
 
+import java.util.Calendar;
+import java.util.Date;
+
 @Service
 public class PlaylistServiceImpl
         extends AbstractService<Playlist, PlaylistDto, Long>
@@ -22,6 +25,13 @@ public class PlaylistServiceImpl
     ) {
         this.repository = repository;
         this.mapper = mapper;
+    }
+
+    @Override
+    public PlaylistDto create(PlaylistDto playlistDto) {
+        Date currentDate = Calendar.getInstance().getTime();
+        playlistDto.setCreationDate(currentDate);
+        return super.create(playlistDto);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class PlaylistMapper extends AbstractMapper<Playlist, PlaylistDto, Long> 
 
     @Override
     protected void mapSpecificFields(PlaylistDto sourceDto, Playlist destinationEntity) {
-        destinationEntity.setOwner(userRepository.getOne(sourceDto.getId()));
+        destinationEntity.setOwner(userRepository.getOne(sourceDto.getOwner().getId()));
     }
 
 }
