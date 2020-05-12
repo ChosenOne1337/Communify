@@ -26,7 +26,7 @@ public class TrackController {
         this.trackService = trackService;
     }
 
-    @GetMapping(value = "/{id}/play")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<StreamingResponseBody> playTrack(
             @PathVariable("id") Long trackId
     ) {
@@ -44,7 +44,6 @@ public class TrackController {
     }
 
     @PostMapping(
-            value = "/upload",
             consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
     public ResponseEntity<TrackDto> uploadTrack(
@@ -58,7 +57,8 @@ public class TrackController {
                 name,
                 author,
                 description,
-                audioFileStream);
+                audioFileStream
+        );
         return ResponseEntity.ok(trackDto);
     }
 
