@@ -5,13 +5,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityService;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserIconService;
 
 @Service
-public class UserIconService
-    extends AbstractEntityImageService<UserDto, Long> {
+public class UserIconServiceImpl
+    extends AbstractEntityImageService<UserDto, Long>
+    implements UserIconService {
 
     @Autowired
-    public UserIconService(
+    public UserIconServiceImpl(
             @Value("${custom.user.icons.dirpath}") String iconDirectoryPath,
             @Value("${custom.user.icons.width}") Integer iconWidth,
             @Value("${custom.user.icons.height}") Integer iconHeight,
