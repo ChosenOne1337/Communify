@@ -91,13 +91,16 @@ public class TrackServiceImpl
         return trackFile;
     }
 
-    private TrackDto createTrack(TrackDto trackDto, File trackFile) {
+    private TrackDto createTrack(TrackDto trackDto, File trackFile) throws IOException {
         TrackDto createdTrackDto = create(trackDto);
-        String trackFileName = getTrackFileNameFromDto(createdTrackDto);
-        boolean isRenamed = trackFile.renameTo(new File(trackDirectoryPath, trackFileName));
-        if (!isRenamed) {
+
+        try {
+            String trackFileName = getTrackFileNameFromDto(createdTrackDto);
+            File renamedTrackFile = new File(trackFileName);
+            Files.move(trackFile.toPath(), renamedTrackFile.toPath());
+        } catch (IOException e) {
             deleteById(createdTrackDto.getId());
-            throw new RuntimeException("Failed to set the right name for the track file");
+            throw e;
         }
 
         return createdTrackDto;

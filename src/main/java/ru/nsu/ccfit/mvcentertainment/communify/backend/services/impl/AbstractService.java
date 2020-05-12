@@ -93,6 +93,15 @@ public abstract class AbstractService
         getRepository().deleteAll(entityCollection);
     }
 
+    protected void throwIfDoesNotExist(ID id) {
+        boolean exists = getRepository().existsById(id);
+        if (!exists) {
+            throw new EntityNotFoundException(
+                    String.format("Entity with id '%s' was not found", id)
+            );
+        }
+    }
+
     protected E getEntityByIdOrThrow(ID id) {
         return getRepository().findById(id).orElseThrow(() ->
                 new EntityNotFoundException(
