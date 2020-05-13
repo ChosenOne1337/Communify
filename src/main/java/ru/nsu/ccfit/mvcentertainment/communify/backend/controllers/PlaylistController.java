@@ -1,12 +1,15 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.PlaylistDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistCoverService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistService;
 
@@ -44,6 +47,13 @@ public class PlaylistController {
             @PathVariable("id") Long userId
     ) {
         return ResponseEntity.ok(playlistService.getById(userId));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<PlaylistBriefDto>> getPlaylists(
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(playlistService.getPlaylists(pageable));
     }
 
     @PutMapping("{id}")
