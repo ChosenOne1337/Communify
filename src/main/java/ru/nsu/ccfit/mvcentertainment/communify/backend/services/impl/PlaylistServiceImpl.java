@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.PlaylistDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.UserBriefDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.PlaylistInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Playlist;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Track;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
@@ -44,21 +46,45 @@ public class PlaylistServiceImpl
     }
 
     @Override
-    public PlaylistDto create(PlaylistDto playlistDto) {
-        Date currentDate = Calendar.getInstance().getTime();
-        playlistDto.setCreationDate(currentDate);
-        return super.create(playlistDto);
+    public PlaylistDto createPlaylist(PlaylistInfoDto playlistInfo) {
+        Date creationDate = Calendar.getInstance().getTime();
+
+        UserBriefDto userBriefDto = new UserBriefDto();
+        userBriefDto.setId(playlistInfo.getOwnerId());
+
+        PlaylistDto playlistDto = new PlaylistDto(
+                playlistInfo.getName(),
+                playlistInfo.getDescription(),
+                creationDate,
+                userBriefDto,
+                playlistInfo.getGenre()
+        );
+
+        return create(playlistDto);
     }
 
     @Override
-    public Page<PlaylistBriefDto> getPlaylists(Pageable pageable) {
+    @Transactional
+    public PlaylistDto updatePlaylistInfo(
+            Long playlistId,
+            PlaylistInfoDto playlistInfoDto
+    ) {
+        PlaylistDto playlistDto = getById(playlistId);
+        playlistDto.setName(playlistInfoDto.getName());
+        playlistDto.setDescription(playlistInfoDto.getDescription());
+        playlistDto.setGenre(playlistInfoDto.getGenre());
+        return save(playlistId, playlistDto);
+    }
+
+    @Override
+    public Page<PlaylistBriefDto> getAllPlaylists(Pageable pageable) {
         return repository
                 .findAll(pageable)
                 .map(briefMapper::toDto);
     }
 
     @Override
-    public Page<TrackDto> getTracks(Long playlistId, Pageable pageable) {
+    public Page<TrackDto> getPlaylistTracks(Long playlistId, Pageable pageable) {
         return trackRepository
                 .findAllPlaylistTracks(playlistId, pageable)
                 .map(trackMapper::toDto);
@@ -66,7 +92,7 @@ public class PlaylistServiceImpl
 
     @Override
     @Transactional
-    public TrackDto addTrack(Long playlistId, Long trackId) {
+    public TrackDto addTrackToPlaylist(Long playlistId, Long trackId) {
         Playlist playlist = getEntityByIdOrThrow(playlistId);
         Track track = trackRepository.getOne(trackId);
         playlist.getTracks().add(track);
@@ -76,7 +102,7 @@ public class PlaylistServiceImpl
 
     @Override
     @Transactional
-    public TrackDto deleteTrack(Long playlistId, Long trackId) {
+    public TrackDto deleteTrackFromPlaylist(Long playlistId, Long trackId) {
         Playlist playlist = getEntityByIdOrThrow(playlistId);
         Track track = trackRepository.getOne(trackId);
         playlist.getTracks().remove(track);

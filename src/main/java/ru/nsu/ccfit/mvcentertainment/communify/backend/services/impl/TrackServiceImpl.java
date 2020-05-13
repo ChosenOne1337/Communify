@@ -5,10 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.TrackInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Track;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.TrackRepository;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.TrackService;
 
 import java.io.File;
@@ -16,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
 
 @Service
 public class TrackServiceImpl
@@ -27,6 +29,8 @@ public class TrackServiceImpl
     private final TrackRepository repository;
     private final Mapper<Track, TrackDto, Long> mapper;
 
+    private final PlaylistService playlistService;
+
     private static final String TEMP_FILE_PREFIX = "track";
     private static final String TEMP_FILE_SUFFIX = null;
 
@@ -34,11 +38,13 @@ public class TrackServiceImpl
     public TrackServiceImpl(
             @Value("${custom.tracks.dirpath}") String trackDirectoryPath,
             TrackRepository repository,
-            Mapper<Track, TrackDto, Long> mapper
+            Mapper<Track, TrackDto, Long> mapper,
+            PlaylistService playlistService
     ) {
         this.trackDirectoryPath = new File(trackDirectoryPath);
         this.repository = repository;
         this.mapper = mapper;
+        this.playlistService = playlistService;
 
         init();
     }
@@ -52,10 +58,10 @@ public class TrackServiceImpl
     }
 
     @Override
+    @Transactional
     public TrackDto uploadTrack(
-            String name,
-            String author,
-            String description,
+            Long playlistId,
+            TrackInfoDto trackInfoDto,
             InputStream audioFileStream
     ) {
 
@@ -64,13 +70,16 @@ public class TrackServiceImpl
             trackFile = createTrackFile(audioFileStream);
             Mp3File mp3trackMetadata = new Mp3File(trackFile);
             TrackDto trackDto = new TrackDto(
-                    name,
-                    author,
-                    Objects.requireNonNullElse(description, ""),
+                    trackInfoDto.getName(),
+                    trackInfoDto.getAuthor(),
+                    trackInfoDto.getDescription(),
                     mp3trackMetadata.getLengthInMilliseconds()
             );
 
-            return createTrack(trackDto, trackFile);
+            trackDto = createTrack(trackDto, trackFile);
+            playlistService.addTrackToPlaylist(playlistId, trackDto.getId());
+
+            return trackDto;
         } catch (Exception e) {
             if (trackFile != null) {
                 trackFile.delete();
@@ -93,16 +102,9 @@ public class TrackServiceImpl
 
     private TrackDto createTrack(TrackDto trackDto, File trackFile) throws IOException {
         TrackDto createdTrackDto = create(trackDto);
-
-        try {
-            String trackFileName = getTrackFileNameFromDto(createdTrackDto);
-            File renamedTrackFile = new File(trackFileName);
-            Files.move(trackFile.toPath(), renamedTrackFile.toPath());
-        } catch (IOException e) {
-            deleteById(createdTrackDto.getId());
-            throw e;
-        }
-
+        String trackFileName = getTrackFileNameFromDto(createdTrackDto);
+        File renamedTrackFile = new File(trackDirectoryPath, trackFileName);
+        Files.move(trackFile.toPath(), renamedTrackFile.toPath());
         return createdTrackDto;
     }
 

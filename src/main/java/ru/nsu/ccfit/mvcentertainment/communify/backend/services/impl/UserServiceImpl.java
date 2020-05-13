@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Playlist;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.User;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
@@ -30,7 +31,8 @@ public class UserServiceImpl
             UserRepository repository,
             PlaylistRepository playlistRepository,
             Mapper<User, UserDto, Long> mapper,
-            Mapper<Playlist, PlaylistBriefDto, Long> playlistBriefMapper) {
+            Mapper<Playlist, PlaylistBriefDto, Long> playlistBriefMapper
+    ) {
         this.repository = repository;
         this.playlistRepository = playlistRepository;
         this.mapper = mapper;
@@ -38,8 +40,27 @@ public class UserServiceImpl
     }
 
     @Override
+    public UserDto createUser(UserInfoDto userInfoDto) {
+        UserDto userDto = new UserDto(
+                userInfoDto.getName(),
+                userInfoDto.getBio()
+        );
+
+        return create(userDto);
+    }
+
+    @Override
     @Transactional
-    public UserDto addPlaylist(Long userId, Long playlistId) {
+    public UserDto updateUserInfo(Long userId, UserInfoDto userInfoDto) {
+        UserDto userDto = getById(userId);
+        userDto.setName(userInfoDto.getName());
+        userDto.setBio(userInfoDto.getBio());
+        return save(userId, userDto);
+    }
+
+    @Override
+    @Transactional
+    public UserDto addUserPlaylist(Long userId, Long playlistId) {
         User user = getEntityByIdOrThrow(userId);
         Playlist playlist = playlistRepository.getOne(playlistId);
         user.getPlaylists().add(playlist);
@@ -49,7 +70,7 @@ public class UserServiceImpl
 
     @Override
     @Transactional
-    public UserDto deletePlaylist(Long userId, Long playlistId) {
+    public UserDto deleteUserPlaylist(Long userId, Long playlistId) {
         User user = getEntityByIdOrThrow(userId);
         Playlist playlist = playlistRepository.getOne(playlistId);
         user.getPlaylists().remove(playlist);
@@ -58,7 +79,7 @@ public class UserServiceImpl
     }
 
     @Override
-    public Page<PlaylistBriefDto> getPlaylists(Long userId, Pageable pageable) {
+    public Page<PlaylistBriefDto> getUserPlaylists(Long userId, Pageable pageable) {
         return playlistRepository
                 .findAllByUserId(userId, pageable)
                 .map(playlistBriefMapper::toDto);

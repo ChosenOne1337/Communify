@@ -4,15 +4,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserInfoDto;
 
 public interface UserService extends EntityService<UserDto, Long> {
 
-    UserDto addPlaylist(Long userId, Long playlistId);
+    UserDto createUser(UserInfoDto userInfoDto);
 
-    UserDto deletePlaylist(Long userId, Long playlistId);
+    UserDto updateUserInfo(Long userId, UserInfoDto userInfoDto);
 
-    Page<PlaylistBriefDto> getPlaylists(Long userId, Pageable pageable);
+    UserDto addUserPlaylist(Long userId, Long playlistId);
+
+    UserDto deleteUserPlaylist(Long userId, Long playlistId);
+
+    Page<PlaylistBriefDto> getUserPlaylists(Long userId, Pageable pageable);
 
     Page<PlaylistBriefDto> getOwnedPlaylists(Long userId, Pageable pageable);
-
 }
