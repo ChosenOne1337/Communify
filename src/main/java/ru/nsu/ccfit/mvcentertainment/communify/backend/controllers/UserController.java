@@ -118,10 +118,10 @@ public class UserController {
         return ResponseEntity.ok(userService.addPlaylist(userId, playlistId));
     }
 
-    @DeleteMapping("{user-id}/playlists/{playlist-id}")
+    @DeleteMapping("{userId}/playlists/{playlistId}")
     public ResponseEntity<UserDto> deletePlaylist(
-            @PathVariable("user-id") Long userId,
-            @PathVariable("playlist-id") Long playlistId
+            @PathVariable("userId") Long userId,
+            @PathVariable("playlistId") Long playlistId
     ) {
         return ResponseEntity.ok(userService.deletePlaylist(userId, playlistId));
     }

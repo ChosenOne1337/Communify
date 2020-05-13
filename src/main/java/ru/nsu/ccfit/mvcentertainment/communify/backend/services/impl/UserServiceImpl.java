@@ -51,7 +51,8 @@ public class UserServiceImpl
     @Transactional
     public UserDto deletePlaylist(Long userId, Long playlistId) {
         User user = getEntityByIdOrThrow(userId);
-        user.getPlaylists().removeIf(p -> p.getId().equals(playlistId));
+        Playlist playlist = playlistRepository.getOne(playlistId);
+        user.getPlaylists().remove(playlist);
         user = repository.save(user);
         return mapper.toDto(user);
     }

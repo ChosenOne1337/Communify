@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.entities;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import java.io.Serializable;
 
 @MappedSuperclass
 @Getter @Setter
+@EqualsAndHashCode
 public class AbstractEntity<ID extends Serializable> implements Serializable {
 
     @Id

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.PlaylistDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistCoverService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistService;
@@ -108,4 +109,29 @@ public class PlaylistController {
     ) {
         return ResponseEntity.ok(playlistCoverService.deleteImage(playlistId));
     }
+
+    @GetMapping("/{id}/tracks")
+    public ResponseEntity<Page<TrackDto>> getTracks(
+            @PathVariable("id") Long playlistId,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(playlistService.getTracks(playlistId, pageable));
+    }
+
+    @PutMapping("/{playlistId}/tracks/{trackId}")
+    public ResponseEntity<TrackDto> addTrack(
+            @PathVariable("playlistId") Long playlistId,
+            @PathVariable("trackId") Long trackId
+    ) {
+        return ResponseEntity.ok(playlistService.addTrack(playlistId, trackId));
+    }
+
+    @DeleteMapping("/{playlistId}/tracks/{trackId}")
+    public ResponseEntity<TrackDto> deleteTrack(
+            @PathVariable("playlistId") Long playlistId,
+            @PathVariable("trackId") Long trackId
+    ) {
+        return ResponseEntity.ok(playlistService.deleteTrack(playlistId, trackId));
+    }
+
 }
