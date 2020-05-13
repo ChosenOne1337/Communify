@@ -6,7 +6,8 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.types.Genre;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "playlist")
@@ -23,13 +24,19 @@ public class Playlist extends AbstractEntity<Long> {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "playlists")
+    private Set<User> users = new HashSet<>();
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
     @JoinTable(
             name = "track_playlist",
             joinColumns = @JoinColumn(name = "playlist_id"),
             inverseJoinColumns = @JoinColumn(name = "track_id")
     )
-    private List<Track> tracks;
+    private Set<Track> tracks = new HashSet<>();
 
     @Column(name = "genre")
     @Enumerated(EnumType.STRING)
