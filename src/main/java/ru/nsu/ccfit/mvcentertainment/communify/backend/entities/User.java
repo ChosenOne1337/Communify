@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "communify_user")
@@ -20,12 +22,15 @@ public class User extends AbstractEntity<Long> {
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     private List<Playlist> ownedPlaylists;
 
-    @ManyToMany
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
     @JoinTable(
             name = "playlist_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "playlist_id")
     )
-    private List<Playlist> playlists;
+    private Set<Playlist> playlists = new HashSet<>();
 
 }

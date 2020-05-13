@@ -7,7 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "track")
@@ -27,6 +28,6 @@ public class Track extends AbstractEntity<Long> {
     private Long duration;
 
     @ManyToMany(mappedBy = "tracks")
-    private List<Playlist> playlists;
+    private Set<Playlist> playlists = new HashSet<>();
 
 }

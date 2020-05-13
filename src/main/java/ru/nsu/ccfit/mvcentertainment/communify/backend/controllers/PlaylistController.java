@@ -12,6 +12,8 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.PlaylistDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistCoverService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistService;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.TrackService;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -23,14 +25,20 @@ import java.nio.file.Files;
 @RequestMapping("/playlists")
 public class PlaylistController {
 
+    private final UserService userService;
+    private final TrackService trackService;
     private final PlaylistService playlistService;
     private final PlaylistCoverService playlistCoverService;
 
     @Autowired
     public PlaylistController(
+            UserService userService,
+            TrackService trackService,
             PlaylistService playlistService,
             PlaylistCoverService playlistCoverService
     ) {
+        this.userService = userService;
+        this.trackService = trackService;
         this.playlistService = playlistService;
         this.playlistCoverService = playlistCoverService;
     }
@@ -44,9 +52,9 @@ public class PlaylistController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PlaylistDto> getPlaylist(
-            @PathVariable("id") Long userId
+            @PathVariable("id") Long playlistId
     ) {
-        return ResponseEntity.ok(playlistService.getById(userId));
+        return ResponseEntity.ok(playlistService.getById(playlistId));
     }
 
     @GetMapping

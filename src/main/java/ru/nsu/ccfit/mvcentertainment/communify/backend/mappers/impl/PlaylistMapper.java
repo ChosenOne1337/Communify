@@ -13,7 +13,6 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.User;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 @Component
 public class PlaylistMapper extends AbstractMapper<Playlist, PlaylistDto, Long> {
@@ -36,7 +35,6 @@ public class PlaylistMapper extends AbstractMapper<Playlist, PlaylistDto, Long> 
     @PostConstruct
     public void setupMapper() {
         skipDtoField(PlaylistDto::setOwner);
-        skipDtoField(PlaylistDto::setTracks);
 
         skipEntityField(Playlist::setOwner);
         skipEntityField(Playlist::setTracks);
@@ -45,11 +43,6 @@ public class PlaylistMapper extends AbstractMapper<Playlist, PlaylistDto, Long> 
     @Override
     protected void mapSpecificFields(Playlist sourceEntity, PlaylistDto destinationDto) {
         destinationDto.setOwner(userMapper.toDto(sourceEntity.getOwner()));
-
-        List<TrackDto> tracks = mapEntityListToDtoList(
-                sourceEntity.getTracks(), trackMapper
-        );
-        destinationDto.setTracks(tracks);
     }
 
     @Override

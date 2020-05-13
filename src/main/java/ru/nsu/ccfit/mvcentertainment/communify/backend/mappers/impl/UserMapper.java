@@ -10,7 +10,6 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.User;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 @Component
 public class UserMapper extends AbstractMapper<User, UserDto, Long> {
@@ -26,24 +25,12 @@ public class UserMapper extends AbstractMapper<User, UserDto, Long> {
 
     @PostConstruct
     public void setupMapper() {
-        skipDtoField(UserDto::setOwnedPlaylists);
-        skipDtoField(UserDto::setPlaylists);
-
         skipEntityField(User::setOwnedPlaylists);
         skipEntityField(User::setPlaylists);
     }
 
     @Override
     protected void mapSpecificFields(User sourceEntity, UserDto destinationDto) {
-        List<PlaylistBriefDto> ownedPlayLists = mapEntityListToDtoList(
-                sourceEntity.getOwnedPlaylists(), playlistMapper
-        );
-        List<PlaylistBriefDto> playLists = mapEntityListToDtoList(
-                sourceEntity.getPlaylists(), playlistMapper
-        );
-
-        destinationDto.setOwnedPlaylists(ownedPlayLists);
-        destinationDto.setPlaylists(playLists);
     }
 
     @Override

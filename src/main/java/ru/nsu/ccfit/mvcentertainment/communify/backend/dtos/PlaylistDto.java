@@ -6,7 +6,6 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.UserBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.types.Genre;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter @Setter
 public class PlaylistDto extends AbstractDto<Long> {
@@ -16,6 +15,5 @@ public class PlaylistDto extends AbstractDto<Long> {
     private Date creationDate;
     private UserBriefDto owner;
     private Genre genre;
-    private List<TrackDto> tracks;
 
 }
