@@ -4,15 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.TrackService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 
 @RestController
@@ -26,14 +25,13 @@ public class TrackController {
         this.trackService = trackService;
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{trackId}")
     public ResponseEntity<StreamingResponseBody> playTrack(
-            @PathVariable("id") Long trackId
+            @PathVariable Long trackId
     ) {
         File trackFile = trackService.getTrackFile(trackId);
-        StreamingResponseBody responseBody = outputStream -> {
-            Files.copy(trackFile.toPath(), outputStream);
-        };
+        StreamingResponseBody responseBody =
+                outputStream -> Files.copy(trackFile.toPath(), outputStream);
 
         return ResponseEntity.ok()
                 .header(
@@ -41,25 +39,6 @@ public class TrackController {
                     String.format("attachment; filename=\"%s\"", trackFile.getName())
                 ).contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(responseBody);
-    }
-
-    @PostMapping(
-            consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE
-    )
-    public ResponseEntity<TrackDto> uploadTrack(
-            @RequestParam String name,
-            @RequestParam String author,
-            @RequestParam(required = false) String description,
-            HttpServletRequest request
-    ) throws IOException {
-        InputStream audioFileStream = request.getInputStream();
-        TrackDto trackDto = trackService.uploadTrack(
-                name,
-                author,
-                description,
-                audioFileStream
-        );
-        return ResponseEntity.ok(trackDto);
     }
 
 }
