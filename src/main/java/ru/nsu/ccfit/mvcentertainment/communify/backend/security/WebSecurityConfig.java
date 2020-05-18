@@ -43,12 +43,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Entry points
         http.authorizeRequests()//
-                .antMatchers("/users/signin").permitAll()
-                .antMatchers("/users/signup").permitAll()
+                .antMatchers("/sign-in").permitAll()
+                .antMatchers("/sign-up").permitAll()
                 .anyRequest().authenticated();
 
-        // If a user try to access a resource without having enough permissions
-        http.exceptionHandling().accessDeniedPage("/login");
+//        // If a user try to access a resource without having enough permissions
+//        http.exceptionHandling().accessDeniedPage("/login");
 
         // Apply JWT
         http.apply(new JwtFilterConfigurer(jwtTokenUtils, userDetailsService));

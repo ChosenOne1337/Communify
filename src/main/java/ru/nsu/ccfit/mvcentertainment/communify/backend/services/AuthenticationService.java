@@ -4,6 +4,8 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserAuthI
 
 public interface AuthenticationService {
 
-    String generateTokenForUser(UserAuthInfoDto userAuthInfoDto);
+    String loginUser(UserAuthInfoDto userAuthInfoDto);
+
+    void registerUser(UserAuthInfoDto userAuthInfoDto);
 
 }

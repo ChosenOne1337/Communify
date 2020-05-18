@@ -21,11 +21,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        var user = userRepository
-                .findByName(userName)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                   String.format("User with name '%s' does not exist", userName)
-                ));
+        var user = userRepository.findByName(userName);
+        if (user == null) {
+            throw new UsernameNotFoundException(
+                    String.format("User with name '%s' does not exist", userName)
+            );
+        }
 
         return new UserDetailsImpl(
                 user.getId(),
