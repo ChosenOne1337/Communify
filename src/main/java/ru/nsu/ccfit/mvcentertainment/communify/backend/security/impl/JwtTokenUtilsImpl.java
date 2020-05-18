@@ -1,16 +1,15 @@
-package ru.nsu.ccfit.mvcentertainment.communify.backend.jwt.impl;
+package ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.jwt.JwtTokenInfo;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.jwt.JwtTokenUtils;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenException;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenInfo;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenUtils;
 
 import java.security.Key;
 
@@ -73,7 +72,14 @@ public class JwtTokenUtilsImpl implements JwtTokenUtils {
     }
 
     private Claims getTokenClaims(String token) {
-        return jwtParser.parseClaimsJws(token).getBody();
+        try {
+            return jwtParser.parseClaimsJws(token).getBody();
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new JwtTokenException(
+                    "Expired or invalid JWT token",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()
+            );
+        }
     }
 
 }

@@ -109,9 +109,9 @@
 		</dependency>
 
 		<dependency>
-		    <groupId>org.sonarsource.scanner.maven</groupId>
-		    <artifactId>sonar-maven-plugin</artifactId>
-		    <version>3.0</version>
+			<groupId>org.sonarsource.scanner.maven</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>3.7.0.1746</version>
 		</dependency>
 
 	</dependencies>
@@ -132,12 +132,9 @@
 		<activeByDefault>true</activeByDefault>
 		</activation>
 		<properties>
-			<sonar.host.url>
-				http://84.237.50.237:9000
-			</sonar.host.url>
-			<sonar.projectKey>
-				Communify-backend
-			</sonar.projectKey>
+			<sonar.host.url>http://84.237.50.237:9000</sonar.host.url>
+			<sonar.projectKey>Communify-backend</sonar.projectKey>
+			<sonar.java.source>11</sonar.java.source>
 		</properties>
 		</profile>
 	</profiles>
