@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl;
+package ru.nsu.ccfit.mvcentertainment.communify.backend.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -7,15 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenException;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenInfo;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenUtils;
 
 import java.security.Key;
 
 @Component
 public class JwtTokenUtilsImpl implements JwtTokenUtils {
 
+    private static final String USER_ID_CLAIM_NAME = "userId";
     private static final String USER_NAME_CLAIM_NAME = "userName";
     private static final String EXPIRATION_DATE_CLAIM_NAME = "exp";
 
@@ -47,8 +45,9 @@ public class JwtTokenUtilsImpl implements JwtTokenUtils {
     }
 
     @Override
-    public String generateToken(String userName) {
+    public String generateToken(Long userId, String userName) {
         Claims claims = Jwts.claims();
+        claims.put(USER_ID_CLAIM_NAME, userId);
         claims.put(USER_NAME_CLAIM_NAME, userName);
         claims.put(EXPIRATION_DATE_CLAIM_NAME, System.currentTimeMillis() + expirationTime);
 
@@ -63,6 +62,7 @@ public class JwtTokenUtilsImpl implements JwtTokenUtils {
     public JwtTokenInfo parseToken(String token) {
         Claims claims = getTokenClaims(token);
         return new JwtTokenInfo(
+            claims.get(USER_ID_CLAIM_NAME, Long.class),
             claims.get(USER_NAME_CLAIM_NAME, String.class),
             claims.get(EXPIRATION_DATE_CLAIM_NAME, Long.class)
         );
@@ -72,7 +72,7 @@ public class JwtTokenUtilsImpl implements JwtTokenUtils {
         try {
             return jwtParser.parseClaimsJws(token).getBody();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtTokenException(
+            throw new CustomAuthException(
                     "Expired or invalid JWT token",
                     HttpStatus.INTERNAL_SERVER_ERROR.value()
             );

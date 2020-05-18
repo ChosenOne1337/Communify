@@ -1,10 +1,10 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.security;
 
-public class JwtTokenException extends RuntimeException {
+public class CustomAuthException extends RuntimeException {
 
     private final int httpStatusCode;
 
-    public JwtTokenException(String message, int httpStatusCode) {
+    public CustomAuthException(String message, int httpStatusCode) {
         super(message);
         this.httpStatusCode = httpStatusCode;
     }

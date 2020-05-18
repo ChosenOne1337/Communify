@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl.UserDetailsImpl;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl.UserDetailsServiceImpl;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.CustomUserDetails;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.UserDetailsServiceImpl;
 
 @RestController
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
@@ -24,7 +24,7 @@ public class BackendApplication {
 	@GetMapping("/users/signin")
 	public void test() {
 		UserDetails user = userDetailsService.loadUserByUsername("test");
-		UserDetailsImpl userDetails = (UserDetailsImpl) user;
+		CustomUserDetails userDetails = (CustomUserDetails) user;
 
 	}
 

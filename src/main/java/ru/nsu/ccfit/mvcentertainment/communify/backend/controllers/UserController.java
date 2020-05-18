@@ -4,13 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserInfoDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.CustomAuthException;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.CustomUserDetails;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserIconService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserService;
 
@@ -37,13 +41,6 @@ public class UserController {
         this.userIconService = userIconService;
     }
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(
-            @RequestBody @Valid UserInfoDto userInfoDto
-    ) {
-        return ResponseEntity.ok(userService.createUser(userInfoDto));
-    }
-
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUser(
             @PathVariable Long userId
@@ -56,6 +53,7 @@ public class UserController {
             @PathVariable Long userId,
             @RequestBody @Valid UserInfoDto userInfoDto
     ) {
+        checkId(userId);
         return ResponseEntity.ok(userService.updateUserInfo(userId, userInfoDto));
     }
 
@@ -67,6 +65,7 @@ public class UserController {
             @PathVariable Long userId,
             HttpServletRequest request
     ) throws IOException {
+        checkId(userId);
         InputStream imageInputStream = request.getInputStream();
         UserDto userDto = userIconService.setImage(userId, imageInputStream);
         return ResponseEntity.ok(userDto);
@@ -92,6 +91,7 @@ public class UserController {
     public ResponseEntity<UserDto> deleteUserIcon(
             @PathVariable Long userId
     ) {
+        checkId(userId);
         return ResponseEntity.ok(userIconService.deleteImage(userId));
     }
 
@@ -116,6 +116,7 @@ public class UserController {
             @PathVariable Long userId,
             @PathVariable Long playlistId
     ) {
+        checkId(userId);
         return ResponseEntity.ok(userService.addUserPlaylist(userId, playlistId));
     }
 
@@ -124,7 +125,24 @@ public class UserController {
             @PathVariable Long userId,
             @PathVariable Long playlistId
     ) {
+        checkId(userId);
         return ResponseEntity.ok(userService.deleteUserPlaylist(userId, playlistId));
+    }
+
+    private void checkId(Long userId) {
+        Long actualUserId = getActualUserId();
+        if (!actualUserId.equals(userId)) {
+            throw new CustomAuthException("Access denied (user id mismatch)", HttpStatus.FORBIDDEN.value());
+        }
+    }
+
+    private Long getActualUserId() {
+        Object userDetails = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getDetails();
+
+        return ((CustomUserDetails) userDetails).getUserId();
     }
 
 }

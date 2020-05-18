@@ -9,10 +9,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserAuthInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.User;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.UserRepository;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenException;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.CustomAuthException;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenUtils;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.AuthenticationService;
 
@@ -23,18 +25,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Mapper<User, UserDto, Long> userMapper;
 
     @Autowired
     public AuthenticationServiceImpl(
             JwtTokenUtils jwtTokenUtils,
             AuthenticationManager authenticationManager,
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder
-    ) {
+            PasswordEncoder passwordEncoder,
+            Mapper<User, UserDto, Long> userMapper) {
         this.jwtTokenUtils = jwtTokenUtils;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -48,9 +52,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             authenticationManager.authenticate(authentication);
             User user = userRepository.findByName(userAuthInfoDto.getUserName());
 
-            return jwtTokenUtils.generateToken(user.getName());
+            return jwtTokenUtils.generateToken(user.getId(), user.getName());
         } catch (AuthenticationException e) {
-            throw new JwtTokenException(
+            throw new CustomAuthException(
                     "Invalid username/password supplied",
                     HttpStatus.UNPROCESSABLE_ENTITY.value()
             );
@@ -59,9 +63,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public void registerUser(UserAuthInfoDto userAuthInfoDto) {
+    public UserDto registerUser(UserAuthInfoDto userAuthInfoDto) {
         if (userRepository.existsByName(userAuthInfoDto.getUserName())) {
-            throw new JwtTokenException("Username already in use", HttpStatus.UNPROCESSABLE_ENTITY.value());
+            throw new CustomAuthException("Username already in use", HttpStatus.UNPROCESSABLE_ENTITY.value());
         }
 
         User user = new User();
@@ -69,6 +73,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(passwordEncoder.encode(userAuthInfoDto.getPassword()));
         user.setBio("");
 
-        userRepository.save(user);
+        user = userRepository.save(user);
+        return userMapper.toDto(user);
     }
 }

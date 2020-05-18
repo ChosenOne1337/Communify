@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class JwtTokenInfo {
 
+    private Long userId;
     private String userName;
     private Long expirationDateMillis;
 

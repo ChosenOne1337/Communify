@@ -40,20 +40,9 @@ public class UserServiceImpl
     }
 
     @Override
-    public UserDto createUser(UserInfoDto userInfoDto) {
-        UserDto userDto = new UserDto(
-                userInfoDto.getName(),
-                userInfoDto.getBio()
-        );
-
-        return create(userDto);
-    }
-
-    @Override
     @Transactional
     public UserDto updateUserInfo(Long userId, UserInfoDto userInfoDto) {
         UserDto userDto = getById(userId);
-        userDto.setName(userInfoDto.getName());
         userDto.setBio(userInfoDto.getBio());
         return save(userId, userDto);
     }

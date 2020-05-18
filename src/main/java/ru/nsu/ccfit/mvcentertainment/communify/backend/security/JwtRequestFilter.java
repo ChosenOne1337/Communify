@@ -7,7 +7,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl.UserDetailsServiceImpl;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -44,7 +43,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 Authentication authentication = createAuthenticationFromJwtToken(jwtToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (JwtTokenException e) {
+        } catch (CustomAuthException e) {
             SecurityContextHolder.clearContext();
             httpServletResponse.sendError(e.getHttpStatusCode(), e.getMessage());
         }

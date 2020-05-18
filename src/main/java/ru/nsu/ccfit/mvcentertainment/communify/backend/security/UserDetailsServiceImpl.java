@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl;
+package ru.nsu.ccfit.mvcentertainment.communify.backend.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             );
         }
 
-        return new UserDetailsImpl(
+        return new CustomUserDetails(
                 user.getId(),
                 user.getName(),
                 user.getPassword(),

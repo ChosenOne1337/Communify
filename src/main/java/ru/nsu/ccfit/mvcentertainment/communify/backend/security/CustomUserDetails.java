@@ -1,15 +1,15 @@
-package ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl;
+package ru.nsu.ccfit.mvcentertainment.communify.backend.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
-public class UserDetailsImpl extends User {
+public class CustomUserDetails extends User {
 
     private final Long userId;
 
-    public UserDetailsImpl(
+    public CustomUserDetails(
             Long userId,
             String username,
             String password,

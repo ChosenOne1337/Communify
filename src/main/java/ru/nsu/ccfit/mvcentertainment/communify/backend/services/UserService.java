@@ -8,8 +8,6 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserInfoD
 
 public interface UserService extends EntityService<UserDto, Long> {
 
-    UserDto createUser(UserInfoDto userInfoDto);
-
     UserDto updateUserInfo(Long userId, UserInfoDto userInfoDto);
 
     UserDto addUserPlaylist(Long userId, Long playlistId);
