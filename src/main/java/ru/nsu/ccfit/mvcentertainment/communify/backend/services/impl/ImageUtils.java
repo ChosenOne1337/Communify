@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.mvcentertainment.communify.backend.utils;
+package ru.nsu.ccfit.mvcentertainment.communify.backend.services.impl;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;

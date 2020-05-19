@@ -5,11 +5,11 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
-public class CustomUserDetails extends User {
+public class CustomUser extends User {
 
     private final Long userId;
 
-    public CustomUserDetails(
+    public CustomUser(
             Long userId,
             String username,
             String password,

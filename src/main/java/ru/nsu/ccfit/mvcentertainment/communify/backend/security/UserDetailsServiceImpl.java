@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             );
         }
 
-        return new CustomUserDetails(
+        return new CustomUser(
                 user.getId(),
                 user.getName(),
                 user.getPassword(),

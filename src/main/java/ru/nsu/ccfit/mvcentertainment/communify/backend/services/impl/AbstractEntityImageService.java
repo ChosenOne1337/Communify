@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.AbstractDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityImageService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityService;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.utils.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;

@@ -11,7 +11,7 @@ public class UserIdentityValidator {
                 .getAuthentication()
                 .getPrincipal();
 
-        return ((CustomUserDetails) principal).getUserId();
+        return ((CustomUser) principal).getUserId();
     }
 
     public static void validateUserId(Long userId) throws AccessDeniedException {
