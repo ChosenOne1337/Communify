@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserInfoDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.UserIdentityValidator;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserIconService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserService;
 
@@ -37,13 +38,6 @@ public class UserController {
         this.userIconService = userIconService;
     }
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(
-            @RequestBody @Valid UserInfoDto userInfoDto
-    ) {
-        return ResponseEntity.ok(userService.createUser(userInfoDto));
-    }
-
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUser(
             @PathVariable Long userId
@@ -56,6 +50,7 @@ public class UserController {
             @PathVariable Long userId,
             @RequestBody @Valid UserInfoDto userInfoDto
     ) {
+        UserIdentityValidator.validateUserId(userId);
         return ResponseEntity.ok(userService.updateUserInfo(userId, userInfoDto));
     }
 
@@ -67,6 +62,7 @@ public class UserController {
             @PathVariable Long userId,
             HttpServletRequest request
     ) throws IOException {
+        UserIdentityValidator.validateUserId(userId);
         InputStream imageInputStream = request.getInputStream();
         UserDto userDto = userIconService.setImage(userId, imageInputStream);
         return ResponseEntity.ok(userDto);
@@ -92,6 +88,7 @@ public class UserController {
     public ResponseEntity<UserDto> deleteUserIcon(
             @PathVariable Long userId
     ) {
+        UserIdentityValidator.validateUserId(userId);
         return ResponseEntity.ok(userIconService.deleteImage(userId));
     }
 
@@ -116,6 +113,7 @@ public class UserController {
             @PathVariable Long userId,
             @PathVariable Long playlistId
     ) {
+        UserIdentityValidator.validateUserId(userId);
         return ResponseEntity.ok(userService.addUserPlaylist(userId, playlistId));
     }
 
@@ -124,6 +122,7 @@ public class UserController {
             @PathVariable Long userId,
             @PathVariable Long playlistId
     ) {
+        UserIdentityValidator.validateUserId(userId);
         return ResponseEntity.ok(userService.deleteUserPlaylist(userId, playlistId));
     }
 

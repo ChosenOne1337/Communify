@@ -19,7 +19,4 @@ public class PlaylistInfoDto {
     @NotNull
     private String description;
 
-    @NotNull
-    private Long ownerId;
-
 }
