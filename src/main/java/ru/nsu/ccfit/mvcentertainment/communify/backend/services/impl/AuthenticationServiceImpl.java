@@ -1,7 +1,6 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,8 +13,8 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserAuthI
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.User;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.UserRepository;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.CustomAuthException;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenUtils;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.exceptions.AuthException;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.AuthenticationService;
 
 @Service
@@ -54,10 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             return jwtTokenUtils.generateToken(user.getId(), user.getName());
         } catch (AuthenticationException e) {
-            throw new CustomAuthException(
-                    "Invalid username or password supplied",
-                    HttpStatus.UNPROCESSABLE_ENTITY.value()
-            );
+            throw new AuthException("Invalid username or password supplied");
         }
     }
 
@@ -65,7 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional
     public UserDto registerUser(UserAuthInfoDto userAuthInfoDto) {
         if (userRepository.existsByName(userAuthInfoDto.getUserName())) {
-            throw new CustomAuthException("Username already in use", HttpStatus.UNPROCESSABLE_ENTITY.value());
+            throw new AuthException("Username is already in use");
         }
 
         User user = new User();

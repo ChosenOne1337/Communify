@@ -5,8 +5,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.exceptions.JwtValidationException;
 
 import java.security.Key;
 
@@ -72,10 +72,7 @@ public class JwtTokenUtilsImpl implements JwtTokenUtils {
         try {
             return jwtParser.parseClaimsJws(token).getBody();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomAuthException(
-                    "Expired or invalid JWT token",
-                    HttpStatus.INTERNAL_SERVER_ERROR.value()
-            );
+            throw new JwtValidationException("Expired or invalid JWT token", e);
         }
     }
 

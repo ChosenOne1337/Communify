@@ -14,6 +14,7 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.PlaylistInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.TrackInfoDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.UserIdentityValidator;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistCoverService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.TrackService;
@@ -48,15 +49,8 @@ public class PlaylistController {
     public ResponseEntity<PlaylistDto> createPlaylist(
             @RequestBody @Valid PlaylistInfoDto playlistInfo
     ) {
-        return ResponseEntity.ok(playlistService.createPlaylist(playlistInfo));
-    }
-
-    @PutMapping("{playlistId}")
-    public ResponseEntity<PlaylistDto> updatePlaylistInfo(
-            @PathVariable Long playlistId,
-            @RequestBody @Valid PlaylistInfoDto playlistInfoDto
-    ) {
-        return ResponseEntity.ok(playlistService.updatePlaylistInfo(playlistId, playlistInfoDto));
+        Long ownerId = UserIdentityValidator.getActualUserId();
+        return ResponseEntity.ok(playlistService.createPlaylist(ownerId, playlistInfo));
     }
 
     @GetMapping("/{playlistId}")
@@ -73,6 +67,15 @@ public class PlaylistController {
         return ResponseEntity.ok(playlistService.getAllPlaylists(pageable));
     }
 
+    @PutMapping("{playlistId}")
+    public ResponseEntity<PlaylistDto> updatePlaylistInfo(
+            @PathVariable Long playlistId,
+            @RequestBody @Valid PlaylistInfoDto playlistInfoDto
+    ) {
+        validatePlaylistOwner(playlistId);
+        return ResponseEntity.ok(playlistService.updatePlaylistInfo(playlistId, playlistInfoDto));
+    }
+
     @PutMapping(
             value = "/{playlistId}/cover",
             consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE
@@ -81,6 +84,7 @@ public class PlaylistController {
             @PathVariable Long playlistId,
             HttpServletRequest request
     ) throws IOException {
+        validatePlaylistOwner(playlistId);
         InputStream imageInputStream = request.getInputStream();
         PlaylistDto playlistDto = playlistCoverService.setImage(playlistId, imageInputStream);
         return ResponseEntity.ok(playlistDto);
@@ -106,6 +110,7 @@ public class PlaylistController {
     public ResponseEntity<PlaylistDto> deletePlaylistCover(
             @PathVariable Long playlistId
     ) {
+        validatePlaylistOwner(playlistId);
         return ResponseEntity.ok(playlistCoverService.deleteImage(playlistId));
     }
 
@@ -122,6 +127,7 @@ public class PlaylistController {
             @PathVariable Long playlistId,
             @PathVariable Long trackId
     ) {
+        validatePlaylistOwner(playlistId);
         return ResponseEntity.ok(playlistService.addTrackToPlaylist(playlistId, trackId));
     }
 
@@ -134,6 +140,7 @@ public class PlaylistController {
             @RequestPart("trackInfo") @Valid TrackInfoDto trackInfoDto,
             @RequestPart(value = "audioFile") MultipartFile audioFile
     ) throws IOException {
+        validatePlaylistOwner(playlistId);
         try (InputStream audioFileStream = audioFile.getInputStream()) {
             return ResponseEntity.ok(trackService.uploadTrack(
                     playlistId, trackInfoDto, audioFileStream
@@ -146,7 +153,13 @@ public class PlaylistController {
             @PathVariable Long playlistId,
             @PathVariable Long trackId
     ) {
+        validatePlaylistOwner(playlistId);
         return ResponseEntity.ok(playlistService.deleteTrackFromPlaylist(playlistId, trackId));
+    }
+
+    private void validatePlaylistOwner(Long playlistId) {
+        Long ownerId = playlistService.getPlaylistOwnerId(playlistId);
+        UserIdentityValidator.validateUserId(ownerId);
     }
 
 }
