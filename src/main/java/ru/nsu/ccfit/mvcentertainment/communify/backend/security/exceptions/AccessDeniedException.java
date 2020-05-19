@@ -17,7 +17,9 @@ public class AccessDeniedException extends RuntimeException {
         super(cause);
     }
 
-    private String formatMessage(String message) {
+    @Override
+    public String getMessage() {
+        String message = super.getMessage();
         return message == null ? "Access denied" : String.format("Access denied: %s", message);
     }
 

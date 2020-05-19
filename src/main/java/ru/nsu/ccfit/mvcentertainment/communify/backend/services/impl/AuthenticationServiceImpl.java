@@ -61,7 +61,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional
     public UserDto registerUser(UserAuthInfoDto userAuthInfoDto) {
         if (userRepository.existsByName(userAuthInfoDto.getUserName())) {
-            throw new AuthException("Username is already in use");
+            throw new AuthException(
+                    String.format("Username '%s' is already in use", userAuthInfoDto.getUserName())
+            );
         }
 
         User user = new User();
