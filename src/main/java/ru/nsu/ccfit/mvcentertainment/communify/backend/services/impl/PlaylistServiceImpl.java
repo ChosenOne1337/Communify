@@ -46,11 +46,16 @@ public class PlaylistServiceImpl
     }
 
     @Override
-    public PlaylistDto createPlaylist(PlaylistInfoDto playlistInfo) {
+    public Long getPlaylistOwnerId(Long playlistId) {
+        return repository.getPlaylistOwnerId(playlistId);
+    }
+
+    @Override
+    public PlaylistDto createPlaylist(Long ownerId, PlaylistInfoDto playlistInfo) {
         Date creationDate = Calendar.getInstance().getTime();
 
         UserBriefDto userBriefDto = new UserBriefDto();
-        userBriefDto.setId(playlistInfo.getOwnerId());
+        userBriefDto.setId(ownerId);
 
         PlaylistDto playlistDto = new PlaylistDto(
                 playlistInfo.getName(),
@@ -69,11 +74,12 @@ public class PlaylistServiceImpl
             Long playlistId,
             PlaylistInfoDto playlistInfoDto
     ) {
-        PlaylistDto playlistDto = getById(playlistId);
-        playlistDto.setName(playlistInfoDto.getName());
-        playlistDto.setDescription(playlistInfoDto.getDescription());
-        playlistDto.setGenre(playlistInfoDto.getGenre());
-        return save(playlistId, playlistDto);
+        Playlist playlist = getEntityByIdOrThrow(playlistId);
+        playlist.setName(playlistInfoDto.getName());
+        playlist.setDescription(playlistInfoDto.getDescription());
+        playlist.setGenre(playlistInfoDto.getGenre());
+        playlist = repository.save(playlist);
+        return mapper.toDto(playlist);
     }
 
     @Override
