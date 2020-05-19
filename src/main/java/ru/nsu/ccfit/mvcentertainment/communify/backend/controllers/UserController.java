@@ -137,12 +137,12 @@ public class UserController {
     }
 
     private Long getActualUserId() {
-        Object userDetails = SecurityContextHolder
+        Object principal = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
-                .getDetails();
+                .getPrincipal();
 
-        return ((CustomUserDetails) userDetails).getUserId();
+        return ((CustomUserDetails) principal).getUserId();
     }
 
 }

@@ -55,7 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return jwtTokenUtils.generateToken(user.getId(), user.getName());
         } catch (AuthenticationException e) {
             throw new CustomAuthException(
-                    "Invalid username/password supplied",
+                    "Invalid username or password supplied",
                     HttpStatus.UNPROCESSABLE_ENTITY.value()
             );
         }
