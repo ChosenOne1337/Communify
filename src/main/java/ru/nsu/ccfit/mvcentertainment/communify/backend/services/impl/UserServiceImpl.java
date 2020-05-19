@@ -42,9 +42,10 @@ public class UserServiceImpl
     @Override
     @Transactional
     public UserDto updateUserInfo(Long userId, UserInfoDto userInfoDto) {
-        UserDto userDto = getById(userId);
-        userDto.setBio(userInfoDto.getBio());
-        return save(userId, userDto);
+        User user = getEntityByIdOrThrow(userId);
+        user.setBio(userInfoDto.getBio());
+        user = repository.save(user);
+        return mapper.toDto(user);
     }
 
     @Override
