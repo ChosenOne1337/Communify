@@ -16,6 +16,7 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.PlaylistRepository;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.TrackRepository;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistService;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.UserService;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,11 +28,13 @@ public class PlaylistServiceImpl
 
     private final PlaylistRepository repository;
     private final TrackRepository trackRepository;
+    private final UserService userService;
     private final Mapper<Playlist, PlaylistDto, Long> mapper;
     private final Mapper<Playlist, PlaylistBriefDto, Long> briefMapper;
     private final Mapper<Track, TrackDto, Long> trackMapper;
 
     public PlaylistServiceImpl(
+            UserService userService,
             PlaylistRepository repository,
             TrackRepository trackRepository,
             Mapper<Playlist, PlaylistDto, Long> mapper,
@@ -40,6 +43,7 @@ public class PlaylistServiceImpl
     ) {
         this.repository = repository;
         this.trackRepository = trackRepository;
+        this.userService = userService;
         this.mapper = mapper;
         this.briefMapper = briefMapper;
         this.trackMapper = trackMapper;
@@ -51,6 +55,7 @@ public class PlaylistServiceImpl
     }
 
     @Override
+    @Transactional
     public PlaylistDto createPlaylist(Long ownerId, PlaylistInfoDto playlistInfo) {
         Date creationDate = Calendar.getInstance().getTime();
 
@@ -65,7 +70,9 @@ public class PlaylistServiceImpl
                 playlistInfo.getGenre()
         );
 
-        return create(playlistDto);
+        playlistDto = create(playlistDto);
+        userService.addUserPlaylist(ownerId, playlistDto.getId());
+        return playlistDto;
     }
 
     @Override
