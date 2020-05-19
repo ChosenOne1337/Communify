@@ -9,7 +9,9 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.PlaylistI
 
 public interface PlaylistService extends EntityService<PlaylistDto, Long> {
 
-    PlaylistDto createPlaylist(PlaylistInfoDto playlistInfo);
+    Long getPlaylistOwnerId(Long playlistId);
+
+    PlaylistDto createPlaylist(Long ownerId, PlaylistInfoDto playlistInfo);
 
     PlaylistDto updatePlaylistInfo(Long playlistId, PlaylistInfoDto playlistInfoDto);
 
@@ -20,4 +22,5 @@ public interface PlaylistService extends EntityService<PlaylistDto, Long> {
     TrackDto addTrackToPlaylist(Long playlistId, Long trackId);
 
     TrackDto deleteTrackFromPlaylist(Long playlistId, Long trackId);
+
 }

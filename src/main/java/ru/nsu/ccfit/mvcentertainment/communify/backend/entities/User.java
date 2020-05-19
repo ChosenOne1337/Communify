@@ -19,6 +19,9 @@ public class User extends AbstractEntity<Long> {
     @Column(name = "bio")
     private String bio;
 
+    @Column(name = "password")
+    private String password;
+
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     private List<Playlist> ownedPlaylists;
 

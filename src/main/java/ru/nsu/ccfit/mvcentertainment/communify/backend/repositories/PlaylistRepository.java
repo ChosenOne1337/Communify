@@ -9,6 +9,9 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Playlist;
 
 public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
 
+    @Query("select distinct o.id from Playlist p join p.owner o where p.id = :playlistId")
+    Long getPlaylistOwnerId(@Param("playlistId") Long playlistId);
+
     Page<Playlist> findAllByOwnerId(Long ownerId, Pageable pageable);
 
     @Query("select distinct p from Playlist p join p.users u where u.id = :userId")
