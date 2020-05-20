@@ -1,3 +1,5 @@
+image: adoptopenjdk/maven-openjdk11:latest
+
 workflow:
   rules:
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
