@@ -3,20 +3,33 @@ image: adoptopenjdk/maven-openjdk11:latest
 stages:
     - build
     - test
+    - release
     - deploy
     
+
 build:
     stage: build
     script:
         - mvn compile
         
+        
 test:
     stage: test
     script:
-        - mvn $MAVEN_CLI_OPTS test
-        - mvn $MAVEN_CLI_OPTS sonar:sonar
+        - mvn test
+        - mvn sonar:sonar
         
-deploy:
+        
+release:
+    stage: release
+    script:
+        - mvn package
+    artifacts:
+        paths:
+            - target/backend-0.0.1-SNAPSHOT.jar
+
+
+production:
     stage: deploy
     rules:
         - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
