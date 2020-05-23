@@ -1,11 +1,13 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.security;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.exceptions.AccessDeniedException;
 
+@UtilityClass
 public class UserIdentityValidator {
 
-    public static Long getActualUserId() {
+    public Long getActualUserId() {
         Object principal = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -14,7 +16,7 @@ public class UserIdentityValidator {
         return ((CustomUser) principal).getUserId();
     }
 
-    public static void validateUserId(Long userId) throws AccessDeniedException {
+    public void validateUserId(Long userId) {
         Long actualUserId = getActualUserId();
         if (!actualUserId.equals(userId)) {
             throw new AccessDeniedException(

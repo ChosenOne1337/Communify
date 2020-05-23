@@ -12,10 +12,9 @@
 	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>backend</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Music streaming service from Siberia. With love.</description>
 
 	<properties>
-<!--		<jdk.version>11</jdk.version>-->
 		<java.version>11</java.version>
 		<maven.compiler.release>11</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
