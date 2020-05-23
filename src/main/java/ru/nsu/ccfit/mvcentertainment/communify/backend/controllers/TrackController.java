@@ -38,6 +38,7 @@ public class TrackController {
                     HttpHeaders.CONTENT_DISPOSITION,
                     String.format("attachment; filename=\"%s\"", trackFile.getName())
                 ).contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(trackFile.length())
                 .body(responseBody);
     }
 
