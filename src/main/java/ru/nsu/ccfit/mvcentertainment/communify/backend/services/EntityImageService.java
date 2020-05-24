@@ -7,13 +7,13 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 public interface EntityImageService
-        <DTO extends AbstractDto<ID>,
-        ID extends Serializable> {
+        <D extends AbstractDto<I>,
+        I extends Serializable> {
 
-    File getImage(ID entityId);
+    File getImage(I entityId);
 
-    DTO setImage(ID entityId, InputStream imageInputStream);
+    D setImage(I entityId, InputStream imageInputStream);
 
-    DTO deleteImage(ID entityId);
+    D deleteImage(I entityId);
 
 }

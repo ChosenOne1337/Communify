@@ -18,9 +18,9 @@ public class UserIconServiceImpl
             @Value("${custom.user.icons.width}") Integer iconWidth,
             @Value("${custom.user.icons.height}") Integer iconHeight,
             @Value("${custom.user.icons.format}") String iconFormat,
-            EntityService<UserDto, Long> entityService
+            EntityService<UserDto, Long> userService
     ) {
-        super(iconFormat, iconWidth, iconHeight, iconDirectoryPath, entityService);
+        super(iconFormat, iconWidth, iconHeight, iconDirectoryPath, userService);
     }
 
 }

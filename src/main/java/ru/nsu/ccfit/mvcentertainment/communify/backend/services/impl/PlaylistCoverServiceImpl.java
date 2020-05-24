@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.services.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.PlaylistDto;
@@ -11,13 +12,14 @@ public class PlaylistCoverServiceImpl
         extends AbstractEntityImageService<PlaylistDto, Long>
         implements PlaylistCoverService {
 
-    protected PlaylistCoverServiceImpl(
+    @Autowired
+    public PlaylistCoverServiceImpl(
             @Value("${custom.playlist.cover.dirpath}") String coverDirectoryPath,
             @Value("${custom.playlist.cover.width}") Integer coverWidth,
             @Value("${custom.playlist.cover.height}") Integer coverHeight,
             @Value("${custom.playlist.cover.format}") String coverFormat,
-            EntityService<PlaylistDto, Long> entityService
+            EntityService<PlaylistDto, Long> playlistService
     ) {
-        super(coverFormat, coverWidth, coverHeight, coverDirectoryPath, entityService);
+        super(coverFormat, coverWidth, coverHeight, coverDirectoryPath, playlistService);
     }
 }

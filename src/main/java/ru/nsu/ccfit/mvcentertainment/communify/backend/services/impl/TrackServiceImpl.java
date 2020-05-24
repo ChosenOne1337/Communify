@@ -134,7 +134,7 @@ public class TrackServiceImpl
     }
 
     @Override
-    protected JpaRepository<Track, Long> getRepository() {
+    protected JpaRepository<Track, Long> getUserRepository() {
         return repository;
     }
 

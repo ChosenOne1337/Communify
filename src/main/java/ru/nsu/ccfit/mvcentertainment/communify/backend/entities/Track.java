@@ -11,10 +11,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "track")
-@Getter @Setter
 @Builder
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = {"playlists"})
 public class Track extends AbstractEntity<Long> {
 
     @Column(name = "name")
@@ -33,3 +34,6 @@ public class Track extends AbstractEntity<Long> {
     private final Set<Playlist> playlists = new HashSet<>();
 
 }
+
+
+

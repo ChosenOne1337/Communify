@@ -8,8 +8,8 @@ import java.io.Serializable;
 
 @Getter @Setter
 @EqualsAndHashCode
-public class AbstractDto<ID extends Serializable> implements Serializable {
+public class AbstractDto<I extends Serializable> implements Serializable {
 
-    private ID id;
+    private I id;
 
 }

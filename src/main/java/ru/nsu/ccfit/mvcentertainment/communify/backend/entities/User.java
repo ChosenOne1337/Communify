@@ -8,10 +8,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "communify_user")
-@Getter @Setter
 @Builder
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = {"ownedPlaylists", "playlists"})
 public class User extends AbstractEntity<Long> {
 
     @Column(name = "name")

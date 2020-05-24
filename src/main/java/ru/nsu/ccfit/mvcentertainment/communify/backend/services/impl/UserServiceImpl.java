@@ -21,19 +21,19 @@ public class UserServiceImpl
     extends AbstractService<User, UserDto, Long>
     implements UserService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PlaylistRepository playlistRepository;
     private final Mapper<User, UserDto, Long> mapper;
     private final Mapper<Playlist, PlaylistBriefDto, Long> playlistBriefMapper;
 
     @Autowired
     public UserServiceImpl(
-            UserRepository repository,
+            UserRepository userRepository,
             PlaylistRepository playlistRepository,
             Mapper<User, UserDto, Long> mapper,
             Mapper<Playlist, PlaylistBriefDto, Long> playlistBriefMapper
     ) {
-        this.repository = repository;
+        this.userRepository = userRepository;
         this.playlistRepository = playlistRepository;
         this.mapper = mapper;
         this.playlistBriefMapper = playlistBriefMapper;
@@ -44,7 +44,7 @@ public class UserServiceImpl
     public UserDto updateUserInfo(Long userId, UserInfoDto userInfoDto) {
         User user = getEntityByIdOrThrow(userId);
         user.setBio(userInfoDto.getBio());
-        user = repository.save(user);
+        user = userRepository.save(user);
         return mapper.toDto(user);
     }
 
@@ -52,9 +52,9 @@ public class UserServiceImpl
     @Transactional
     public UserDto addUserPlaylist(Long userId, Long playlistId) {
         User user = getEntityByIdOrThrow(userId);
-        Playlist playlist = playlistRepository.getOne(playlistId);
+        Playlist playlist = getEntityByIdOrThrow(playlistRepository, playlistId);
         user.getPlaylists().add(playlist);
-        user = repository.save(user);
+        user = userRepository.save(user);
         return mapper.toDto(user);
     }
 
@@ -62,9 +62,9 @@ public class UserServiceImpl
     @Transactional
     public UserDto deleteUserPlaylist(Long userId, Long playlistId) {
         User user = getEntityByIdOrThrow(userId);
-        Playlist playlist = playlistRepository.getOne(playlistId);
+        Playlist playlist = getEntityByIdOrThrow(playlistRepository, playlistId);
         user.getPlaylists().remove(playlist);
-        user = repository.save(user);
+        user = userRepository.save(user);
         return mapper.toDto(user);
     }
 
@@ -83,8 +83,8 @@ public class UserServiceImpl
     }
 
     @Override
-    protected JpaRepository<User, Long> getRepository() {
-        return repository;
+    protected JpaRepository<User, Long> getUserRepository() {
+        return userRepository;
     }
 
     @Override

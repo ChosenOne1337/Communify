@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.AppConfig;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.TestEntityFactory;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Track;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.impl.TrackMapper;
@@ -21,30 +22,19 @@ public class TrackMapperTests {
         ModelMapper modelMapper = new AppConfig().modelMapper();
         trackMapper = new TrackMapper(modelMapper);
 
-        track = Track.builder()
-                .name("Track name")
-                .author("Track's author")
-                .description("Track's description")
-                .duration(123456L)
-                .build();
-        track.setId(42L);
-
-        trackDto = TrackDto.builder()
-                .name(track.getName())
-                .author(track.getAuthor())
-                .description(track.getDescription())
-                .duration(track.getDuration())
-                .build();
-        trackDto.setId(track.getId());
+        track = TestEntityFactory.createTrack();
+        trackDto = TestEntityFactory.createTrackDto(track);
     }
 
     @Test
     void toDto() {
         Assertions.assertEquals(trackDto, trackMapper.toDto(track));
+        Assertions.assertNull(trackMapper.toDto(null));
     }
 
     @Test
     void fromDto() {
         Assertions.assertEquals(track, trackMapper.toEntity(trackDto));
+        Assertions.assertNull(trackMapper.toEntity(null));
     }
 }

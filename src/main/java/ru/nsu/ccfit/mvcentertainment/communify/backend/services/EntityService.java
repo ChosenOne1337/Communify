@@ -4,26 +4,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
-import java.util.Collection;
 
-public interface EntityService<DTO, ID extends Serializable> {
+public interface EntityService<D, I extends Serializable> {
 
-    long countAll();
+    D getById(I id);
 
-    DTO getById(ID id);
+    Page<D> getAll(Pageable pageable);
 
-    Page<DTO> getAll(Pageable pageable);
+    D create(D dto);
 
-    Collection<DTO> getAllById(Collection<ID> idCollection);
+    D save(I id, D dto);
 
-    DTO create(DTO dto);
-
-    DTO save(ID id, DTO dto);
-
-    Collection<DTO> saveAll(Collection<DTO> dtoCollection);
-
-    void deleteById(ID id);
-
-    void deleteAllById(Collection<ID> idCollection);
+    void deleteById(I id);
 
 }

@@ -124,7 +124,7 @@ public class PlaylistServiceImpl
     }
 
     @Override
-    protected JpaRepository<Playlist, Long> getRepository() {
+    protected JpaRepository<Playlist, Long> getUserRepository() {
         return repository;
     }
 

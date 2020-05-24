@@ -10,10 +10,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "playlist")
-@Getter @Setter
 @Builder
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = {"users", "tracks", "owner"})
 public class Playlist extends AbstractEntity<Long> {
 
     private String name;
@@ -38,6 +39,7 @@ public class Playlist extends AbstractEntity<Long> {
             joinColumns = @JoinColumn(name = "playlist_id"),
             inverseJoinColumns = @JoinColumn(name = "track_id")
     )
+
     private final Set<Track> tracks = new HashSet<>();
 
     @Column(name = "genre")

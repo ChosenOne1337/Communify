@@ -13,20 +13,20 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public abstract class AbstractMapper
-        <E extends AbstractEntity<ID>,
-        DTO extends AbstractDto<ID>,
-        ID extends Serializable>
-        implements Mapper<E, DTO, ID> {
+        <E extends AbstractEntity<I>,
+        D extends AbstractDto<I>,
+        I extends Serializable>
+        implements Mapper<E, D, I> {
 
     @Getter
     private final ModelMapper mapper;
-    private final TypeMap<E, DTO> entityToDtoTypeMap;
-    private final TypeMap<DTO, E> dtoToEntityTypeMap;
+    private final TypeMap<E, D> entityToDtoTypeMap;
+    private final TypeMap<D, E> dtoToEntityTypeMap;
 
     private final Class<E> entityClass;
-    private final Class<DTO> dtoClass;
+    private final Class<D> dtoClass;
 
-    protected AbstractMapper(ModelMapper mapper, Class<E> entityClass, Class<DTO> dtoClass) {
+    protected AbstractMapper(ModelMapper mapper, Class<E> entityClass, Class<D> dtoClass) {
         this.mapper = mapper;
         this.entityClass = entityClass;
         this.dtoClass = dtoClass;
@@ -40,38 +40,38 @@ public abstract class AbstractMapper
     }
 
     @Override
-    public E toEntity(DTO dto) {
+    public E toEntity(D dto) {
         return Objects.isNull(dto)
                 ? null
                 : mapper.map(dto, entityClass);
     }
 
     @Override
-    public DTO toDto(E entity) {
+    public D toDto(E entity) {
         return Objects.isNull(entity)
                 ? null
                 : mapper.map(entity, dtoClass);
     }
 
-    private Converter<E, DTO> toDtoConverter() {
+    private Converter<E, D> toDtoConverter() {
         return context -> {
             E source = context.getSource();
-            DTO destination = context.getDestination();
+            D destination = context.getDestination();
             mapSpecificFields(source, destination);
             return context.getDestination();
         };
     }
 
-    private Converter<DTO, E> toEntityConverter() {
+    private Converter<D, E> toEntityConverter() {
         return context -> {
-            DTO source = context.getSource();
+            D source = context.getSource();
             E destination = context.getDestination();
             mapSpecificFields(source, destination);
             return context.getDestination();
         };
     }
 
-    protected <V> void skipDtoField(DestinationSetter<DTO,V> destinationSetter) {
+    protected <V> void skipDtoField(DestinationSetter<D,V> destinationSetter) {
         entityToDtoTypeMap.addMappings(m -> m.skip(destinationSetter));
     }
 
@@ -79,9 +79,9 @@ public abstract class AbstractMapper
         dtoToEntityTypeMap.addMappings(m -> m.skip(destinationSetter));
     }
 
-    protected void mapSpecificFields(E sourceEntity, DTO destinationDto) {
+    protected void mapSpecificFields(E sourceEntity, D destinationDto) {
     }
 
-    protected void mapSpecificFields(DTO sourceDto, E destinationEntity) {
+    protected void mapSpecificFields(D sourceDto, E destinationEntity) {
     }
 }

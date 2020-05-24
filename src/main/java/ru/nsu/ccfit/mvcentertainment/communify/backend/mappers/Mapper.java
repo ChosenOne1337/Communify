@@ -6,12 +6,12 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.AbstractEntity;
 import java.io.Serializable;
 
 public interface Mapper
-        <E extends AbstractEntity<ID>,
-        DTO extends AbstractDto<ID>,
-        ID extends Serializable> {
+        <E extends AbstractEntity<I>,
+        D extends AbstractDto<I>,
+        I extends Serializable> {
 
-    E toEntity(DTO dto);
+    E toEntity(D dto);
 
-    DTO toDto(E entity);
+    D toDto(E entity);
 
 }

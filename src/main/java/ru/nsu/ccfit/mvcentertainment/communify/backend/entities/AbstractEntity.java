@@ -10,12 +10,12 @@ import java.io.Serializable;
 @MappedSuperclass
 @Getter @Setter
 @EqualsAndHashCode
-public class AbstractEntity<ID extends Serializable> implements Serializable {
+public class AbstractEntity<I extends Serializable> implements Serializable {
 
     @Id
     @Access(value = AccessType.PROPERTY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private ID id;
+    private I id;
 
 }

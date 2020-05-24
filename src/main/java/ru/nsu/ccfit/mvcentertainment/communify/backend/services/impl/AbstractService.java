@@ -11,91 +11,55 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityService;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 public abstract class AbstractService
-        <E extends AbstractEntity<ID>,
-        DTO extends AbstractDto<ID>,
-        ID extends Serializable>
-        implements EntityService<DTO, ID> {
+        <E extends AbstractEntity<I>,
+        D extends AbstractDto<I>,
+        I extends Serializable>
+        implements EntityService<D, I> {
 
-    protected abstract JpaRepository<E, ID> getRepository();
-    protected abstract Mapper<E, DTO, ID> getMapper();
-
-    @Override
-    public long countAll() {
-        return getRepository().count();
-    }
+    protected abstract JpaRepository<E, I> getUserRepository();
+    protected abstract Mapper<E, D, I> getMapper();
 
     @Override
-    public DTO getById(ID id) {
+    public D getById(I id) {
         E entity = getEntityByIdOrThrow(id);
         return getMapper().toDto(entity);
     }
 
     @Override
-    public Page<DTO> getAll(Pageable pageable) {
-        return getRepository()
+    public Page<D> getAll(Pageable pageable) {
+        return getUserRepository()
                 .findAll(pageable)
                 .map(getMapper()::toDto);
     }
 
     @Override
-    public Collection<DTO> getAllById(Collection<ID> idCollection) {
-        return getRepository()
-                .findAllById(idCollection)
-                .stream()
-                .map(getMapper()::toDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     @Transactional
-    public DTO create(DTO dto) {
+    public D create(D dto) {
         var entity = getMapper().toEntity(dto);
-        entity = getRepository().save(entity);
+        entity = getUserRepository().save(entity);
         return getMapper().toDto(entity);
     }
 
     @Override
     @Transactional
-    public DTO save(ID id, DTO dto) {
+    public D save(I id, D dto) {
         dto.setId(id);
         return create(dto);
     }
 
     @Override
-    public Collection<DTO> saveAll(Collection<DTO> dtoCollection) {
-        var entityCollection = dtoCollection
-                .stream()
-                .map(getMapper()::toEntity)
-                .collect(Collectors.toList());
-
-        return getRepository()
-                .saveAll(entityCollection)
-                .stream()
-                .map(getMapper()::toDto)
-                .collect(Collectors.toList());
+    public void deleteById(I id) {
+        getUserRepository().deleteById(id);
     }
 
-    @Override
-    public void deleteById(ID id) {
-        getRepository().deleteById(id);
+    protected E getEntityByIdOrThrow(I id) {
+        return getEntityByIdOrThrow(getUserRepository(), id);
     }
 
-    @Override
-    public void deleteAllById(Collection<ID> idCollection) {
-        var entityCollection = idCollection
-                .stream()
-                .map(getRepository()::getOne)
-                .collect(Collectors.toList());
-
-        getRepository().deleteAll(entityCollection);
-    }
-
-    protected E getEntityByIdOrThrow(ID id) {
-        return getRepository().findById(id).orElseThrow(() ->
+    protected <X, I> X getEntityByIdOrThrow(JpaRepository<X, I> repository, I id) {
+        return repository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException(
                         String.format("Entity with id '%s' was not found", id)
                 )
