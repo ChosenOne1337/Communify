@@ -1,13 +1,12 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class UserDto extends AbstractDto<Long> {
 
     private String name;

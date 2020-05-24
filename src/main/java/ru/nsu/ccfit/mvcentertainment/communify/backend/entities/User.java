@@ -1,16 +1,17 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "communify_user")
 @Getter @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User extends AbstractEntity<Long> {
 
     @Column(name = "name")
@@ -23,7 +24,7 @@ public class User extends AbstractEntity<Long> {
     private String password;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
-    private List<Playlist> ownedPlaylists;
+    private final Set<Playlist> ownedPlaylists = new HashSet<>();
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
@@ -34,6 +35,6 @@ public class User extends AbstractEntity<Long> {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "playlist_id")
     )
-    private Set<Playlist> playlists = new HashSet<>();
+    private final Set<Playlist> playlists = new HashSet<>();
 
 }

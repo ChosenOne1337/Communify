@@ -1,7 +1,6 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.types.Genre;
 
 import javax.persistence.*;
@@ -12,6 +11,9 @@ import java.util.Set;
 @Entity
 @Table(name = "playlist")
 @Getter @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Playlist extends AbstractEntity<Long> {
 
     private String name;
@@ -25,7 +27,7 @@ public class Playlist extends AbstractEntity<Long> {
     private User owner;
 
     @ManyToMany(mappedBy = "playlists")
-    private Set<User> users = new HashSet<>();
+    private final Set<User> users = new HashSet<>();
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
@@ -36,7 +38,7 @@ public class Playlist extends AbstractEntity<Long> {
             joinColumns = @JoinColumn(name = "playlist_id"),
             inverseJoinColumns = @JoinColumn(name = "track_id")
     )
-    private Set<Track> tracks = new HashSet<>();
+    private final Set<Track> tracks = new HashSet<>();
 
     @Column(name = "genre")
     @Enumerated(EnumType.STRING)

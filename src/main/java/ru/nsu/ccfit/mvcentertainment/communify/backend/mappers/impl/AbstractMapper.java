@@ -10,10 +10,7 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.AbstractEntity;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public abstract class AbstractMapper
         <E extends AbstractEntity<ID>,
@@ -80,19 +77,6 @@ public abstract class AbstractMapper
 
     protected <V> void skipEntityField(DestinationSetter<E,V> destinationSetter) {
         dtoToEntityTypeMap.addMappings(m -> m.skip(destinationSetter));
-    }
-
-    protected <T extends AbstractEntity<I>, S extends AbstractDto<I>, I extends Serializable>
-                    List<S> mapEntityListToDtoList(List<T> entityList, Mapper<T, S, I> mapper) {
-
-        List<T> notNullEntityList = Objects.requireNonNullElse(
-                entityList, Collections.emptyList()
-        );
-
-        return notNullEntityList
-                .stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
     }
 
     protected void mapSpecificFields(E sourceEntity, DTO destinationDto) {
