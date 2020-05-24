@@ -45,11 +45,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public String loginUser(UserAuthInfoDto userAuthInfoDto) {
         try {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userAuthInfoDto.getUserName(), userAuthInfoDto.getPassword()
+                    userAuthInfoDto.getName(), userAuthInfoDto.getPassword()
             );
 
             authenticationManager.authenticate(authentication);
-            User user = userRepository.findByName(userAuthInfoDto.getUserName());
+            User user = userRepository.findByName(userAuthInfoDto.getName());
 
             return jwtTokenUtils.generateToken(user.getId(), user.getName());
         } catch (AuthenticationException e) {
@@ -60,14 +60,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public UserDto registerUser(UserAuthInfoDto userAuthInfoDto) {
-        if (userRepository.existsByName(userAuthInfoDto.getUserName())) {
+        if (userRepository.existsByName(userAuthInfoDto.getName())) {
             throw new AuthException(
-                    String.format("Username '%s' is already in use", userAuthInfoDto.getUserName())
+                    String.format("Username '%s' is already in use", userAuthInfoDto.getName())
             );
         }
 
         User user = new User();
-        user.setName(userAuthInfoDto.getUserName());
+        user.setName(userAuthInfoDto.getName());
         user.setPassword(passwordEncoder.encode(userAuthInfoDto.getPassword()));
         user.setBio("");
 

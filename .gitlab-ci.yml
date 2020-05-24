@@ -1,25 +1,35 @@
 image: adoptopenjdk/maven-openjdk11:latest
 
-workflow:
-  rules:
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
-    - if: $CI_COMMIT_BRANCH == 'master'
-
 stages:
-  - build
-  - test
+    - build
+    - test
+    - deploy
+    
 
-variables:
-  MAVEN_CLI_OPTS: "--batch-mode -DprojectKey=Communify-backend -Dsonar.host.url=http://84.237.50.237:9000 -Dsonar.login=983652716d13dd68d74c30344e0f2696fd87736e"
+build:
+    stage: build
+    script:
+        - mvn compile
+    artifacts:
+        paths:
+            - target/
+        
+test:
+    stage: test
+    script:
+        - mvn test
+        - mvn sonar:sonar
+    artifacts:
+        paths:
+            - target/
 
-buildBackend:
-  stage: build
-  script:
-    - mvn $MAVEN_CLI_OPTS compile
 
-testBackend:
-  stage: test
-  needs: ['buildBackend']
-  script:
-    - mvn $MAVEN_CLI_OPTS test
-    - mvn $MAVEN_CLI_OPTS sonar:sonar
+production:
+    stage: deploy
+    script:
+        - mvn -Dmaven.test.skip=true package
+        - curl --location "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar zx
+        - ./cf login -u $CF_USERNAME -p $CF_PASSWORD -a api.run.pivotal.io
+        - ./cf push
+    only:
+        - master

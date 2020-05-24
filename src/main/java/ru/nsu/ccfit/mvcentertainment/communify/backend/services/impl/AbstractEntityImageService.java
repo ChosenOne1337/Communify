@@ -2,10 +2,11 @@ package ru.nsu.ccfit.mvcentertainment.communify.backend.services.impl;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.AbstractDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityImageService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.EntityService;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.exceptions.ResourceException;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.exceptions.ServiceInitException;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public abstract class AbstractEntityImageService
         File imageFile = new File(imageDirectoryPath, imageFileName);
 
         if (!imageFile.exists()) {
-            throw new RuntimeException(
+            throw new ResourceException(
                     String.format("Image file for entity with id '%s' does not exist", entityId)
             );
         }
@@ -79,25 +80,31 @@ public abstract class AbstractEntityImageService
             );
 
             return dto;
-        } catch (Exception e) {
-            if (tempImageFile != null) {
-                tempImageFile.delete();
+        } catch (IOException e) {
+            ResourceException resourceException = new ResourceException(e);
+
+            try {
+                if (tempImageFile != null) {
+                    Files.delete(tempImageFile.toPath());
+                }
+            } catch (IOException ioException) {
+                resourceException.addSuppressed(ioException);
             }
 
-            throw new RuntimeException(e);
+            throw resourceException;
         }
     }
 
     @Override
-    @SneakyThrows
     public DTO deleteImage(ID entityId) {
         DTO dto = entityService.getById(entityId);
         String imageFileName = getImageFileNameFromDto(dto);
         File imageFile = new File(imageDirectoryPath, imageFileName);
-        boolean isDeleted = Files.deleteIfExists(imageFile.toPath());
-        if (!isDeleted) {
-            throw new RuntimeException(
-                    String.format("Image file for entity with id '%s' does not exist", entityId)
+        try {
+            Files.delete(imageFile.toPath());
+        } catch (IOException e) {
+            throw new ResourceException(
+                    String.format("Failed to delete image for entity with id '%s'", entityId), e
             );
         }
 
@@ -126,7 +133,7 @@ public abstract class AbstractEntityImageService
 
         boolean isCreated = imageDirectoryPath.mkdirs();
         if (!isCreated) {
-            throw new RuntimeException(
+            throw new ServiceInitException(
                     String.format("Failed to create %s", imageDirectoryPath.getAbsolutePath())
             );
         }

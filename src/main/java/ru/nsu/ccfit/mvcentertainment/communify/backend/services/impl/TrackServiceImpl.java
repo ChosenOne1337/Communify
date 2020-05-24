@@ -13,6 +13,8 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.TrackRepository;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.PlaylistService;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.TrackService;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.exceptions.ResourceException;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.exceptions.ServiceInitException;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,11 +83,17 @@ public class TrackServiceImpl
 
             return trackDto;
         } catch (Exception e) {
-            if (trackFile != null) {
-                trackFile.delete();
+            ResourceException resourceException = new ResourceException(e);
+
+            try {
+                if (trackFile != null) {
+                    Files.delete(trackFile.toPath());
+                }
+            } catch (IOException ioException) {
+                resourceException.addSuppressed(ioException);
             }
 
-            throw new RuntimeException(e);
+            throw resourceException;
         }
     }
 
@@ -119,7 +127,7 @@ public class TrackServiceImpl
 
         boolean isCreated = trackDirectoryPath.mkdirs();
         if (!isCreated) {
-            throw new RuntimeException(
+            throw new ServiceInitException(
                     String.format("Failed to create %s", trackDirectoryPath.getAbsolutePath())
             );
         }

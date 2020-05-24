@@ -59,6 +59,7 @@ public abstract class AbstractService
     }
 
     @Override
+    @Transactional
     public DTO save(ID id, DTO dto) {
         dto.setId(id);
         return create(dto);

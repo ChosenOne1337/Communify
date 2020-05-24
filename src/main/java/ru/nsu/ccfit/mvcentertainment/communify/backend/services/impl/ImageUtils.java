@@ -1,5 +1,8 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.services.impl;
 
+import lombok.experimental.UtilityClass;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.services.exceptions.ResourceException;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -9,9 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+@UtilityClass
 public class ImageUtils {
 
-    public static void scaleImage(
+    public void scaleImage(
             File imageFile,
             Integer width,
             Integer height,
@@ -35,11 +39,11 @@ public class ImageUtils {
         ImageIO.write(scaledImage, outputImageFormat, imageFile);
     }
 
-    public static void validateImage(File imageFile) throws IOException {
+    public void validateImage(File imageFile) throws IOException {
         try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageFile)) {
             Iterator<ImageReader> imageReaderIterator = ImageIO.getImageReaders(imageInputStream);
             if (!imageReaderIterator.hasNext()) {
-                throw new RuntimeException("Image has an unknown format");
+                throw new ResourceException("Image has an unknown format");
             }
         }
     }
