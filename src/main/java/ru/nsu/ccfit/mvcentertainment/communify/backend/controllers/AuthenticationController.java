@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TokenDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.UserAuthInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.AuthenticationService;
@@ -28,11 +29,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<String> signIn(
+    public ResponseEntity<TokenDto> signIn(
             @RequestBody UserAuthInfoDto userAuthInfoDto
     ) {
         String token = authenticationService.loginUser(userAuthInfoDto);
-        return ResponseEntity.ok(token);
+        TokenDto tokenDto = new TokenDto(token);
+        return ResponseEntity.ok(tokenDto);
     }
 
 }

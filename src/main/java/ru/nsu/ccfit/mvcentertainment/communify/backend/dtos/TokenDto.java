@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters;
+package ru.nsu.ccfit.mvcentertainment.communify.backend.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,9 +8,8 @@ import lombok.Setter;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAuthInfoDto {
+public class TokenDto {
 
-    private String name;
-    private String password;
+    private String token;
 
 }

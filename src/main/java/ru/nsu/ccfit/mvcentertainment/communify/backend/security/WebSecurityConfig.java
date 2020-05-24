@@ -44,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()//
                 .antMatchers("/sign-in").permitAll()
                 .antMatchers("/sign-up").permitAll()
+                .antMatchers("/tracks/**").permitAll()
                 .anyRequest().authenticated();
 
         // Apply JWT

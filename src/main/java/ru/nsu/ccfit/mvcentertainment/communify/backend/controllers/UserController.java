@@ -3,7 +3,6 @@ package ru.nsu.ccfit.mvcentertainment.communify.backend.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,6 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/users")
@@ -73,15 +71,7 @@ public class UserController {
             @PathVariable Long userId
     ) {
         File iconFile = userIconService.getImage(userId);
-        StreamingResponseBody responseBody =
-                outputStream -> Files.copy(iconFile.toPath(), outputStream);
-
-        return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        String.format("attachment; filename=\"%s\"", iconFile.getName())
-                ).contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(responseBody);
+        return StreamingResponseFactory.getStreamingResponse(iconFile);
     }
 
     @DeleteMapping("/{userId}/icon")
