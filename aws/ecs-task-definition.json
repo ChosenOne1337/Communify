@@ -6,7 +6,7 @@
       "image": "380326703863.dkr.ecr.us-east-2.amazonaws.com/gitlabci:latest",
 
       "cpu": 0,
-      "memory": 256,
+      "memory": 128,
       "portMappings": [
         {
           "hostPort": 8080,
