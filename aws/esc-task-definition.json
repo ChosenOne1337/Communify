@@ -1,0 +1,34 @@
+{
+  "family": "MyTaskDef",
+  "containerDefinitions": [
+    {
+      "name": "MyTaskDef",
+      "image": "380326703863.dkr.ecr.us-east-2.amazonaws.com/gitlabci:latest",
+
+      "cpu": 0,
+      "memory": 256,
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "spring.profiles.active",
+          "value": "PRD"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/MyTaskDef",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
