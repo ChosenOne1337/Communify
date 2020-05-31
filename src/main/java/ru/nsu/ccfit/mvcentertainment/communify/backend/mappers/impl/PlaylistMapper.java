@@ -8,6 +8,7 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.UserBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Playlist;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.User;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.Mapper;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.repositories.UserRepository;
 
 import javax.annotation.PostConstruct;
 
@@ -15,14 +16,17 @@ import javax.annotation.PostConstruct;
 public class PlaylistMapper extends AbstractMapper<Playlist, PlaylistDto, Long> {
 
     private final Mapper<User, UserBriefDto, Long> userBriefMapper;
+    private final UserRepository userRepository;
 
     @Autowired
     public PlaylistMapper(
             ModelMapper mapper,
-            Mapper<User, UserBriefDto, Long> userBriefMapper
+            Mapper<User, UserBriefDto, Long> userBriefMapper,
+            UserRepository userRepository
     ) {
         super(mapper, Playlist.class, PlaylistDto.class);
         this.userBriefMapper = userBriefMapper;
+        this.userRepository = userRepository;
     }
 
     @PostConstruct
@@ -36,8 +40,10 @@ public class PlaylistMapper extends AbstractMapper<Playlist, PlaylistDto, Long> 
     }
 
     @Override
-    public Playlist toEntity(PlaylistDto playlistDto) {
-        throw new UnsupportedOperationException();
+    protected void mapSpecificFields(PlaylistDto sourceDto, Playlist destinationEntity) {
+        destinationEntity.setOwner(
+                userRepository.findById(sourceDto.getOwner().getId()).orElse(null)
+        );
     }
 
 }
