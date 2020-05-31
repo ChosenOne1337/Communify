@@ -41,8 +41,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String jwtToken = resolveToken(httpServletRequest);
         try {
-            Authentication authentication = createAuthenticationFromJwtToken(jwtToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (jwtToken != null) {
+                Authentication authentication = createAuthenticationFromJwtToken(jwtToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         } catch (JwtValidationException e) {
             SecurityContextHolder.clearContext();
             httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), e.getMessage());
