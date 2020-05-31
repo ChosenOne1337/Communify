@@ -19,12 +19,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenUtils jwtTokenUtils;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Autowired
     public WebSecurityConfig(
             JwtTokenUtils jwtTokenUtils,
-            UserDetailsServiceImpl userDetailsService
+            CustomUserDetailsService userDetailsService
     ) {
         this.jwtTokenUtils = jwtTokenUtils;
         this.userDetailsService = userDetailsService;

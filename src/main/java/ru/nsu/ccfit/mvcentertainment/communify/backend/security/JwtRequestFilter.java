@@ -21,12 +21,12 @@ import java.util.Collections;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtils jwtTokenUtils;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Autowired
     public JwtRequestFilter(
             JwtTokenUtils jwtTokenUtils,
-            UserDetailsServiceImpl userDetailsService
+            CustomUserDetailsService userDetailsService
     ) {
         this.jwtTokenUtils = jwtTokenUtils;
         this.userDetailsService = userDetailsService;

@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.mvcentertainment.communify.backend.security;
+package ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -6,6 +6,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenInfo;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenUtils;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.exceptions.JwtValidationException;
 
 import java.security.Key;

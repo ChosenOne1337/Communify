@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenInfo;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenUtils;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenUtilsImpl;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.exceptions.JwtValidationException;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl.JwtTokenUtilsImpl;
 
 public class JwtTokenUtilsTests {
 
