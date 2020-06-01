@@ -97,8 +97,7 @@ public class AuthenticationServiceTests {
                 Mockito.any()
         )).then(invocation -> {
             User user = invocation.getArgument(0);
-            Long userId = (long) userSet.size();
-            user.setId(userId);
+            user.setId((long) userSet.size());
             userSet.add(user);
             return user;
         });

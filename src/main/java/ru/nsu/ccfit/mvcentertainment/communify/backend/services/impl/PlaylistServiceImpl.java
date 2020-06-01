@@ -107,7 +107,7 @@ public class PlaylistServiceImpl
     @Transactional
     public TrackDto addTrackToPlaylist(Long playlistId, Long trackId) {
         Playlist playlist = getEntityByIdOrThrow(playlistId);
-        Track track = trackRepository.getOne(trackId);
+        Track track = getEntityByIdOrThrow(trackRepository, trackId);
         playlist.getTracks().add(track);
         repository.save(playlist);
         return trackMapper.toDto(track);
@@ -117,7 +117,7 @@ public class PlaylistServiceImpl
     @Transactional
     public TrackDto deleteTrackFromPlaylist(Long playlistId, Long trackId) {
         Playlist playlist = getEntityByIdOrThrow(playlistId);
-        Track track = trackRepository.getOne(trackId);
+        Track track = getEntityByIdOrThrow(trackRepository, trackId);
         playlist.getTracks().remove(track);
         repository.save(playlist);
         return trackMapper.toDto(track);

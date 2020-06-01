@@ -6,7 +6,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.TestEntityFactory;
-import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.exceptions.ResourceException;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.services.impl.UserIconServiceImpl;
 
@@ -56,11 +55,9 @@ public class UserIconServiceTests {
                 throw new EntityNotFoundException();
             }
 
-            UserDto existingUserDto = TestEntityFactory.createUserDto(
+            return TestEntityFactory.createUserDto(
                     TestEntityFactory.createUser(existingUserId)
             );
-
-            return existingUserDto;
         });
     }
 
@@ -123,4 +120,5 @@ public class UserIconServiceTests {
         }
         Files.delete(tempDirectory);
     }
+
 }
