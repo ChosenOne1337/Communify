@@ -99,6 +99,9 @@ public class PlaylistServiceImpl
 
     @Override
     public Page<PlaylistBriefDto> search(PlaylistFilter filter, Pageable pageable) {
+        filter.setName(
+                filter.getName() == null ? null : String.format("%%%s%%", filter.getName().toLowerCase())
+        );
         return repository.search(
                 filter.getMinCreationDate(),
                 filter.getMaxCreationDate(),
