@@ -25,13 +25,13 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
         "where (:genre is null or p.genre = :genre)" +
         "and (coalesce(:minCreationDate, :minCreationDate) is null or p.creationDate >= :minCreationDate)" +
         "and (coalesce(:maxCreationDate, :maxCreationDate) is null or p.creationDate <= :maxCreationDate)" +
-        "and (:namePattern is null or lower(p.name) like lower(concat('%', :nameToFind, '%')))"
+        "and (:namePattern is null or lower(p.name) like lower(concat('%', :name, '%')))"
     )
     Page<Playlist> search(
             @Param("minCreationDate") Date minCreationDate,
             @Param("minCreationDate") Date maxCreationDate,
             @Param("genre") Genre genre,
-            @Param("nameToFind") String name,
+            @Param("name") String name,
             Pageable pageable
     );
 }
