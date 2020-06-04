@@ -22,6 +22,15 @@
 		<sonar.login>983652716d13dd68d74c30344e0f2696fd87736e</sonar.login>
 		<sonar.projectKey>Communify-backend</sonar.projectKey>
 		<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
+		<sonar.coverage.exclusions>
+			**/controllers/**/*,
+			**/dtos/**/*,
+			**/entities/**/*,
+			**/security/*,
+			**/*Config.*,
+			**/*Application.*,
+			**/exceptions/**/*
+		</sonar.coverage.exclusions>
 	</properties>
 
 	<dependencies>
@@ -120,9 +129,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.1.0</version>
 			<scope>test</scope>
 		</dependency>
 

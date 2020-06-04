@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.UserDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.User;
 
-import javax.annotation.PostConstruct;
-
 @Component
 public class UserMapper extends AbstractMapper<User, UserDto, Long> {
 
@@ -16,10 +14,9 @@ public class UserMapper extends AbstractMapper<User, UserDto, Long> {
         super(mapper, User.class, UserDto.class);
     }
 
-    @PostConstruct
-    public void setupMapper() {
-        skipEntityField(User::setOwnedPlaylists);
-        skipEntityField(User::setPlaylists);
+    @Override
+    public User toEntity(UserDto userDto) {
+        throw new UnsupportedOperationException();
     }
 
 }

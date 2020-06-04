@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.mvcentertainment.communify.backend.security;
+package ru.nsu.ccfit.mvcentertainment.communify.backend.security.impl;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -6,6 +6,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenInfo;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.security.JwtTokenUtils;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.exceptions.JwtValidationException;
 
 import java.security.Key;
@@ -40,8 +42,13 @@ public class JwtTokenUtilsImpl implements JwtTokenUtils {
 
     @Override
     public boolean validateToken(String token) {
-        JwtTokenInfo jwtTokenInfo = parseToken(token);
-        return jwtTokenInfo.getExpirationDateMillis() >= System.currentTimeMillis();
+        try {
+            parseToken(token);
+        } catch (JwtValidationException e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -61,18 +68,24 @@ public class JwtTokenUtilsImpl implements JwtTokenUtils {
     @Override
     public JwtTokenInfo parseToken(String token) {
         Claims claims = getTokenClaims(token);
-        return new JwtTokenInfo(
+        JwtTokenInfo jwtTokenInfo = new JwtTokenInfo(
             claims.get(USER_ID_CLAIM_NAME, Long.class),
             claims.get(USER_NAME_CLAIM_NAME, String.class),
             claims.get(EXPIRATION_DATE_CLAIM_NAME, Long.class)
         );
+
+        if (jwtTokenInfo.getExpirationDateMillis() < System.currentTimeMillis()) {
+            throw new JwtValidationException("JWT token is expired");
+        }
+
+        return jwtTokenInfo;
     }
 
     private Claims getTokenClaims(String token) {
         try {
             return jwtParser.parseClaimsJws(token).getBody();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtValidationException("Expired or invalid JWT token", e);
+            throw new JwtValidationException("JWT token is invalid", e);
         }
     }
 

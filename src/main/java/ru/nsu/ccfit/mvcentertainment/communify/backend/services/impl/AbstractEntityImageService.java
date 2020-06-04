@@ -17,9 +17,9 @@ import java.nio.file.StandardCopyOption;
 
 @Getter(value = AccessLevel.PROTECTED)
 public abstract class AbstractEntityImageService
-        <DTO extends AbstractDto<ID>,
-        ID extends Serializable>
-        implements EntityImageService<DTO, ID> {
+        <D extends AbstractDto<I>,
+        I extends Serializable>
+        implements EntityImageService<D, I> {
 
     private static final String TEMP_FILE_PREFIX = "image";
     private static final String TEMP_FILE_SUFFIX = null;
@@ -29,14 +29,14 @@ public abstract class AbstractEntityImageService
     private final Integer imageHeight;
     private final File imageDirectoryPath;
 
-    private final EntityService<DTO, ID> entityService;
+    private final EntityService<D, I> entityService;
 
     protected AbstractEntityImageService(
             String imageFormat,
             Integer imageWidth,
             Integer imageHeight,
             String imageDirectoryPath,
-            EntityService<DTO, ID> entityService
+            EntityService<D, I> entityService
     ) {
 
         this.imageFormat = imageFormat;
@@ -49,8 +49,8 @@ public abstract class AbstractEntityImageService
     }
 
     @Override
-    public File getImage(ID entityId) {
-        DTO dto = entityService.getById(entityId);
+    public File getImage(I entityId) {
+        D dto = entityService.getById(entityId);
         String imageFileName = getImageFileNameFromDto(dto);
         File imageFile = new File(imageDirectoryPath, imageFileName);
 
@@ -64,14 +64,14 @@ public abstract class AbstractEntityImageService
     }
 
     @Override
-    public DTO setImage(ID entityId, InputStream imageInputStream) {
+    public D setImage(I entityId, InputStream imageInputStream) {
         File tempImageFile = null;
         try (imageInputStream) {
             tempImageFile = createTempImageFile(imageInputStream);
             ImageUtils.validateImage(tempImageFile);
             ImageUtils.scaleImage(tempImageFile, imageWidth, imageHeight, imageFormat);
 
-            DTO dto = entityService.getById(entityId);
+            D dto = entityService.getById(entityId);
             String imageFileName = getImageFileNameFromDto(dto);
             File renamedImageFile = new File(imageDirectoryPath, imageFileName);
             Files.move(
@@ -96,8 +96,8 @@ public abstract class AbstractEntityImageService
     }
 
     @Override
-    public DTO deleteImage(ID entityId) {
-        DTO dto = entityService.getById(entityId);
+    public D deleteImage(I entityId) {
+        D dto = entityService.getById(entityId);
         String imageFileName = getImageFileNameFromDto(dto);
         File imageFile = new File(imageDirectoryPath, imageFileName);
         try {
@@ -111,7 +111,7 @@ public abstract class AbstractEntityImageService
         return dto;
     }
 
-    protected String getImageFileNameFromDto(DTO dto) {
+    protected String getImageFileNameFromDto(D dto) {
         return String.format("%s.%s", dto.getId(), imageFormat);
     }
 

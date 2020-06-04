@@ -1,7 +1,6 @@
 package ru.nsu.ccfit.mvcentertainment.communify.backend.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +11,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "track")
+@Builder
 @Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = {"playlists"})
 public class Track extends AbstractEntity<Long> {
 
     @Column(name = "name")
@@ -28,6 +31,9 @@ public class Track extends AbstractEntity<Long> {
     private Long duration;
 
     @ManyToMany(mappedBy = "tracks")
-    private Set<Playlist> playlists = new HashSet<>();
+    private final Set<Playlist> playlists = new HashSet<>();
 
 }
+
+
+

@@ -14,4 +14,9 @@ public class UserBriefMapper extends AbstractMapper<User, UserBriefDto, Long> {
         super(mapper, User.class, UserBriefDto.class);
     }
 
+    @Override
+    public User toEntity(UserBriefDto userBriefDto) {
+        throw new UnsupportedOperationException();
+    }
+
 }

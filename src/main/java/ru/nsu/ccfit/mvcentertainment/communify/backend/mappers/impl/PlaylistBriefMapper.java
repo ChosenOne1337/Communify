@@ -2,7 +2,6 @@ package ru.nsu.ccfit.mvcentertainment.communify.backend.mappers.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.UserBriefDto;
@@ -15,33 +14,30 @@ import javax.annotation.PostConstruct;
 @Component
 public class PlaylistBriefMapper extends AbstractMapper<Playlist, PlaylistBriefDto, Long> {
 
-    private final Mapper<User, UserBriefDto, Long> userMapper;
-    private final JpaRepository<User, Long> userRepository;
+    private final Mapper<User, UserBriefDto, Long> userBriefMapper;
 
     @Autowired
-    public PlaylistBriefMapper(ModelMapper mapper,
-                               Mapper<User, UserBriefDto, Long> userMapper,
-                               JpaRepository<User, Long> userRepository) {
+    public PlaylistBriefMapper(
+            ModelMapper mapper,
+            Mapper<User, UserBriefDto, Long> userBriefMapper
+    ) {
         super(mapper, Playlist.class, PlaylistBriefDto.class);
-        this.userMapper = userMapper;
-        this.userRepository = userRepository;
+        this.userBriefMapper = userBriefMapper;
     }
 
     @PostConstruct
     public void setupMapper() {
         skipDtoField(PlaylistBriefDto::setOwner);
-
-        skipEntityField(Playlist::setOwner);
     }
 
     @Override
     protected void mapSpecificFields(Playlist sourceEntity, PlaylistBriefDto destinationDto) {
-        destinationDto.setOwner(userMapper.toDto(sourceEntity.getOwner()));
+        destinationDto.setOwner(userBriefMapper.toDto(sourceEntity.getOwner()));
     }
 
     @Override
-    protected void mapSpecificFields(PlaylistBriefDto sourceDto, Playlist destinationEntity) {
-        destinationEntity.setOwner(userRepository.getOne(sourceDto.getId()));
+    public Playlist toEntity(PlaylistBriefDto playlistBriefDto) {
+        throw new UnsupportedOperationException();
     }
 
 }

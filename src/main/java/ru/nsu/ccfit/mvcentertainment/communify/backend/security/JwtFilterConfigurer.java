@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 public class JwtFilterConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     private final JwtTokenUtils jwtTokenProvider;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Autowired
     public JwtFilterConfigurer(
             JwtTokenUtils jwtTokenProvider,
-            UserDetailsServiceImpl userDetailsService
+            CustomUserDetailsService userDetailsService
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;

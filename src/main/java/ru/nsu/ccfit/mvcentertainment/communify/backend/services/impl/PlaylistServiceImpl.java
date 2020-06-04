@@ -9,6 +9,7 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.PlaylistDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.UserBriefDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.filters.PlaylistFilter;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.PlaylistInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Playlist;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Track;
@@ -97,6 +98,20 @@ public class PlaylistServiceImpl
     }
 
     @Override
+    public Page<PlaylistBriefDto> search(PlaylistFilter filter, Pageable pageable) {
+        filter.setName(
+                filter.getName() == null ? null : String.format("%%%s%%", filter.getName().toLowerCase())
+        );
+        return repository.search(
+                filter.getMinCreationDate(),
+                filter.getMaxCreationDate(),
+                filter.getGenre(),
+                filter.getName(),
+                pageable
+        ).map(briefMapper::toDto);
+    }
+
+    @Override
     public Page<TrackDto> getPlaylistTracks(Long playlistId, Pageable pageable) {
         return trackRepository
                 .findAllPlaylistTracks(playlistId, pageable)
@@ -107,7 +122,7 @@ public class PlaylistServiceImpl
     @Transactional
     public TrackDto addTrackToPlaylist(Long playlistId, Long trackId) {
         Playlist playlist = getEntityByIdOrThrow(playlistId);
-        Track track = trackRepository.getOne(trackId);
+        Track track = getEntityByIdOrThrow(trackRepository, trackId);
         playlist.getTracks().add(track);
         repository.save(playlist);
         return trackMapper.toDto(track);
@@ -117,14 +132,14 @@ public class PlaylistServiceImpl
     @Transactional
     public TrackDto deleteTrackFromPlaylist(Long playlistId, Long trackId) {
         Playlist playlist = getEntityByIdOrThrow(playlistId);
-        Track track = trackRepository.getOne(trackId);
+        Track track = getEntityByIdOrThrow(trackRepository, trackId);
         playlist.getTracks().remove(track);
         repository.save(playlist);
         return trackMapper.toDto(track);
     }
 
     @Override
-    protected JpaRepository<Playlist, Long> getRepository() {
+    protected JpaRepository<Playlist, Long> getUserRepository() {
         return repository;
     }
 
