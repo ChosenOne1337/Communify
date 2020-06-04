@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.PlaylistDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.filters.PlaylistFilter;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.PlaylistInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.TrackInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.security.UserIdentityValidator;
@@ -63,6 +64,14 @@ public class PlaylistController {
             Pageable pageable
     ) {
         return ResponseEntity.ok(playlistService.getAllPlaylists(pageable));
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<Page<PlaylistBriefDto>> search(
+            @RequestBody PlaylistFilter filter,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(playlistService.search(filter, pageable));
     }
 
     @PutMapping("{playlistId}")

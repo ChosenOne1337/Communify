@@ -9,6 +9,7 @@ import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.PlaylistDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.TrackDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.PlaylistBriefDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.brief.UserBriefDto;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.filters.PlaylistFilter;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.dtos.parameters.PlaylistInfoDto;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Playlist;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Track;
@@ -94,6 +95,20 @@ public class PlaylistServiceImpl
         return repository
                 .findAll(pageable)
                 .map(briefMapper::toDto);
+    }
+
+    @Override
+    public Page<PlaylistBriefDto> search(PlaylistFilter filter, Pageable pageable) {
+        filter.setName(
+                filter.getName() == null ? null : String.format("%%%s%%", filter.getName().toLowerCase())
+        );
+        return repository.search(
+                filter.getMinCreationDate(),
+                filter.getMaxCreationDate(),
+                filter.getGenre(),
+                filter.getName(),
+                pageable
+        ).map(briefMapper::toDto);
     }
 
     @Override

@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.Playlist;
+import ru.nsu.ccfit.mvcentertainment.communify.backend.entities.types.Genre;
+
+import java.util.Date;
 
 public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
 
@@ -16,4 +19,19 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
 
     @Query("select distinct p from Playlist p join p.users u where u.id = :userId")
     Page<Playlist> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
+
+    @Query(
+        "select distinct p from Playlist p " +
+        "where (:genre is null or p.genre = :genre)" +
+        "and (coalesce(:minCreationDate, :minCreationDate) is null or p.creationDate >= :minCreationDate)" +
+        "and (coalesce(:maxCreationDate, :maxCreationDate) is null or p.creationDate <= :maxCreationDate)" +
+        "and (:name is null or lower(p.name) like :name)"
+    )
+    Page<Playlist> search(
+            @Param("minCreationDate") Date minCreationDate,
+            @Param("maxCreationDate") Date maxCreationDate,
+            @Param("genre") Genre genre,
+            @Param("name") String name,
+            Pageable pageable
+    );
 }
