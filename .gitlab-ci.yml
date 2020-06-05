@@ -1,17 +1,10 @@
 image: adoptopenjdk/maven-openjdk11:latest
 
-before_script:
-    - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
-
-variables:
-    REPOSITORY_URL: 380326703863.dkr.ecr.us-east-2.amazonaws.com/gitlabci
 
 stages:
     - build
     - test
-    - package
-    - deploy
-    
+    - delivery
 
 build:
     stage: build
@@ -31,28 +24,14 @@ test:
         paths:
             - target/
 
-
-build-image:
+delivery:
     image: docker:latest
-    stage: package
+    stage: delivery
     services:
-        - name: docker:dind
-    script:
-        - apk add --no-cache curl jq python py-pip
-        - pip install awscli
-        - $(aws ecr get-login --no-include-email --region us-east-2)
-        - docker build -t $REPOSITORY_URL:latest .
-        - docker tag $REPOSITORY_URL:latest $REPOSITORY_URL:$IMAGE_TAG
-        - docker push $REPOSITORY_URL:latest
-        - docker push $REPOSITORY_URL:$IMAGE_TAG
-
-deploy:
-    image: python:latest
-    stage: deploy
-    script:
-        - pip install awscli
-        - echo $REPOSITORY_URL:$IMAGE_TAG
-        - aws ecs register-task-definition --region us-east-2 --family MyTaskDef --cli-input-json file://aws/ecs-task-definition.json
-        - aws ecs update-service --region us-east-2 --cluster MyCluster --service MyService  --task-definition MyTaskDef
-    only:
-        - master
+        - docker:dind
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+        script:
+            - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+            - docker build -t $IMAGE_TAG .
+            - docker push $IMAGE_TAG

@@ -1,10 +1,8 @@
 FROM adoptopenjdk/openjdk11:alpine-jre
 
-ARG JAR_FILE
+COPY ./target/backend-0.0.1-SNAPSHOT.jar /root/app.jar
+COPY ./entrypoint.sh /root/entrypoint.sh
 
-RUN mkdir -p /apps
-COPY ./target/backend-0.0.1-SNAPSHOT-spring-boot.jar /apps/app.jar
-COPY ./entrypoint.sh /apps/entrypoint.sh
+RUN ["chmod", "+x", "/root/entrypoint.sh"]
 
-RUN chmod +x /apps/entrypoint.sh
-CMD ["/apps/entrypoint.sh"]
+ENTRYPOINT ["/root/entrypoint.sh"]

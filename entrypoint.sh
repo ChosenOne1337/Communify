@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-java -XX: -jar /apps/app.jar
+java  -Dserver.port=$PORT -jar /root/app.jar
