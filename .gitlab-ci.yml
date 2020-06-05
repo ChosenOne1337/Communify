@@ -4,7 +4,7 @@ image: adoptopenjdk/maven-openjdk11:latest
 stages:
     - build
     - test
-    - delivery
+    - deploy
 
 build:
     stage: build
@@ -24,9 +24,9 @@ test:
         paths:
             - target/
 
-delivery:
+deploy:
     image: docker:latest
-    stage: delivery
+    stage: deploy
     services:
         - docker:dind
     variables:
