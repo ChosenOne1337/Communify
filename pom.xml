@@ -10,14 +10,23 @@
 	</parent>
 	<groupId>ru.nsu.ccfit.mvcentertainment.communify</groupId>
 	<artifactId>backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>latest</version>
 	<name>backend</name>
 	<description>Music streaming service from Siberia. With love.</description>
 
+	<packaging>jar</packaging>
+
 	<properties>
+		<!--
+		<mavem.compiler.source>11</mavem.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		-->
+		<start-class>ru.nsu.ccfit.mvcentertainment.communify.backend.BackendApplication</start-class>
 		<java.version>11</java.version>
 		<maven.compiler.release>11</maven.compiler.release>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
 		<sonar.host.url>http://84.237.50.237:9000/</sonar.host.url>
 		<sonar.login>983652716d13dd68d74c30344e0f2696fd87736e</sonar.login>
 		<sonar.projectKey>Communify-backend</sonar.projectKey>
@@ -157,23 +166,58 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<!-- <finalName>backend-communify</finalName> -->
 		<plugins>
+			<!--
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<fork>true</fork>
+					<mainClass>ru.nsu.ccfit.mvcentertainment.communify.backend.BackendApplication</mainClass>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>repackage</goal>
 						</goals>
-						<configuration>
-							<classifier>spring-boot</classifier>
-							<mainClass>
-								ru.nsu.ccfit.mvcentertainment.communify.backend
-							</mainClass>
-						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>ru.nsu.ccfit.mvcentertainment.communify.backend.BackendApplication</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>assemble-all</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
 			<plugin>
@@ -218,7 +262,6 @@
 					<argLine>@{surefireArgLine}</argLine>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 
