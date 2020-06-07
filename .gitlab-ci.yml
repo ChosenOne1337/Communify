@@ -15,7 +15,6 @@ stages:
 build:
     stage: build
     script:
-        - mvn clean
         - mvn -Dmaven.test.skip=true package
     artifacts:
         paths:
