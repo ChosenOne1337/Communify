@@ -9,20 +9,17 @@ stages:
 build:
     stage: build
     script:
-        - mvn compile
+        - mvn clean
         - mvn -Dmaven.test.skip=true package
     artifacts:
         paths:
-            - target/
+            - target/backend-latest.jar
         
 test:
     stage: test
     script:
         - mvn test
         - mvn sonar:sonar
-    artifacts:
-        paths:
-            - target/
 
 delivery:
     image: docker:latest
